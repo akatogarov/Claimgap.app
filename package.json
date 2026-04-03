@@ -11,7 +11,7 @@
     "lint": "next lint",
     "db:apply": "node scripts/apply-schema.mjs",
     "pages:build": "npx @cloudflare/next-on-pages",
-    "cf:pages": "npx @cloudflare/next-on-pages@1",
+    "cf:build": "npx @cloudflare/next-on-pages@1",
     "pages:deploy": "npm run build && npx @cloudflare/next-on-pages && wrangler pages deploy .vercel/output/static"
   },
   "dependencies": {

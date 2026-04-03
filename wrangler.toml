@@ -1,6 +1,11 @@
 # Cloudflare Pages + Next.js (@cloudflare/next-on-pages)
 # https://developers.cloudflare.com/pages/functions/wrangler-configuration/
 #
+# IMPORTANT (Git integration):
+# - Build command must run the adapter: `npm run cf:build` (NOT `npm run build` alone).
+# - Do NOT set Deploy command to `npx wrangler deploy` — that is Workers. Pages deploys
+#   the "Build output directory" automatically; leave Deploy command empty / default.
+#
 # If deploy fails with "name mismatch", either rename the Pages project to match
 # or run: npx wrangler pages download config
 
