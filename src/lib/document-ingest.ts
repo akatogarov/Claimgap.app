@@ -1,4 +1,3 @@
-import { Buffer } from "node:buffer";
 import { extractText as unpdfExtract } from "unpdf";
 import { extractTextFromImage } from "./claude-vision";
 import { isPdfMagicBytes } from "./pdf-validate";
@@ -29,30 +28,21 @@ export function validateFileMeta(size: number, fileName: string, mime: string): 
   return null;
 }
 
-async function extractPdfWithPdfParse(buffer: ArrayBuffer): Promise<string> {
-  const pdfParse = (await import("pdf-parse")).default;
-  const data = await pdfParse(Buffer.from(buffer));
-  return (data.text ?? "").trim();
-}
-
-async function extractPdfFallbackUnpdf(buffer: ArrayBuffer): Promise<string> {
+/** Edge-safe PDF text extraction (no pdf-parse — it requires Node `fs`). */
+export async function extractPdfText(buffer: ArrayBuffer): Promise<string> {
   const { text } = await unpdfExtract(new Uint8Array(buffer), { mergePages: true });
   return (text ?? "").trim();
 }
 
-export async function extractPdfText(buffer: ArrayBuffer): Promise<string> {
-  try {
-    const t = await extractPdfWithPdfParse(buffer);
-    if (t.length > 0) return t;
-  } catch {
-    /* fall through */
-  }
-  return extractPdfFallbackUnpdf(buffer);
+function arrayBufferToBase64(buffer: ArrayBuffer): string {
+  const bytes = new Uint8Array(buffer);
+  let binary = "";
+  for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]);
+  return btoa(binary);
 }
 
 async function extractImageText(buffer: ArrayBuffer, mediaType: "image/jpeg" | "image/png"): Promise<string> {
-  const b64 = Buffer.from(buffer).toString("base64");
-  return extractTextFromImage(b64, mediaType);
+  return extractTextFromImage(arrayBufferToBase64(buffer), mediaType);
 }
 
 export async function extractTextFromUpload(

@@ -3,8 +3,7 @@ import { getServiceSupabase } from "@/lib/supabase-server";
 import { mergeClarificationIntoExtracted, runPreviewAnalysis, parseOfferNumber } from "@/lib/anthropic";
 import type { ClaimRow, StoredAnalysis } from "@/lib/types";
 
-export const runtime = "nodejs";
-export const maxDuration = 300;
+export const runtime = "edge";
 
 export async function POST(request: Request, context: { params: { id: string } }) {
   const { id } = context.params;

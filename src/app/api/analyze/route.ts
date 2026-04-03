@@ -15,8 +15,7 @@ import {
 import { getBlobFromFormEntry } from "@/lib/pdf-validate";
 import type { InsuranceType, StoredAnalysis } from "@/lib/types";
 
-export const runtime = "nodejs";
-export const maxDuration = 300;
+export const runtime = "edge";
 
 const MAX_STORE = 400_000;
 
