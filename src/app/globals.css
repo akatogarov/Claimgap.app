@@ -1,0 +1,46 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --navy: #1e3d5c;
+  --foreground: #1a2f45;
+  --background: #f4f1ea;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+}
+
+::selection {
+  background: rgba(30, 61, 92, 0.12);
+  color: #1a2f45;
+}
+
+@media print {
+  body {
+    background: white;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Subtle paper grain — avoids flat “AI gradient” look */
+  .bg-paper-grain {
+    background-color: #f4f1ea;
+    background-image: radial-gradient(
+        ellipse 120% 80% at 100% 0%,
+        rgba(30, 61, 92, 0.06),
+        transparent 55%
+      ),
+      radial-gradient(ellipse 80% 60% at 0% 100%, rgba(180, 83, 9, 0.04), transparent 50%);
+  }
+
+  .hairline-top {
+    box-shadow: inset 0 1px 0 0 rgba(26, 47, 69, 0.08);
+  }
+}
