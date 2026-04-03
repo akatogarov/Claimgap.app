@@ -12,6 +12,7 @@
     "db:apply": "node scripts/apply-schema.mjs",
     "pages:build": "npx @cloudflare/next-on-pages",
     "cf:build": "npx @cloudflare/next-on-pages@1",
+    "cf:deploy": "npx wrangler pages deploy .vercel/output/static",
     "pages:deploy": "npm run build && npx @cloudflare/next-on-pages && wrangler pages deploy .vercel/output/static"
   },
   "dependencies": {

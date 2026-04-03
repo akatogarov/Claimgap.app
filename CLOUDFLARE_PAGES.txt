@@ -1,17 +1,30 @@
-Cloudflare Pages — обязательные настройки (Workers & Pages → ваш проект → Settings → Builds)
+Cloudflare Pages — Workers & Pages → проект → Settings → Builds
 
-1) Build command (НЕ "npm run build"):
+1) Build command:
    npm run cf:build
 
-2) Build output directory:
+2) Path / Build output directory (БЕЗ ведущего слэша):
    .vercel/output/static
+   НЕ "/.vercel/output/static" — уберите "/" в начале, если поле это не принимает.
 
-3) Deploy command — ОЧИСТИТЬ полностью (удалить "npx wrangler deploy").
-   Для Pages с Git деплой идёт автоматически после сборки.
-   Команда "wrangler deploy" только для Workers и ломает Pages.
+3) Deploy command (если поле ОБЯЗАТЕЛЬНО — так и нужно для Direct Upload / нового UI):
+   npm run cf:deploy
+   или напрямую:
+   npx wrangler pages deploy .vercel/output/static
 
-4) Переменная NODE_VERSION = 20 (опционально).
+   НИКОГДА не используйте "npx wrangler deploy" (это Workers, не Pages).
 
-5) Settings → Functions → compatibility flag: nodejs_compat
+   Если wrangler спросит имя проекта, добавьте (подставьте своё имя проекта в Cloudflare):
+   npx wrangler pages deploy .vercel/output/static --project-name=claimgap
+
+4) Non-production branch deploy command (если есть):
+   можно такую же как в п.3, или оставить пустым если разрешено.
+
+5) Version command:
+   оставьте пустым или уберите, если не нужен отдельный шаг версионирования Workers.
+
+6) NODE_VERSION = 20 (переменная среды сборки).
+
+7) Settings → Functions → nodejs_compat.
 
 После сохранения — Retry deployment.
