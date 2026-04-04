@@ -1,7 +1,10 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
 # dependencies
 /node_modules
 /.pnp
 .pnp.js
+.yarn/install-state.gz
 
 # testing
 /coverage
@@ -13,15 +16,9 @@
 # production
 /build
 
-# typescript
-*.tsbuildinfo
-
 # misc
 .DS_Store
 *.pem
-.cursor/
-.claude/
-supabase/.temp/
 
 # debug
 npm-debug.log*
@@ -35,5 +32,15 @@ yarn-error.log*
 # vercel
 .vercel
 
-# wrangler
-.wrangler
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# cloudflare
+.wrangler/
+.dev.vars
+wrangler.toml.backup
+
+# OpenNext
+.open-next/
+.worker-next/

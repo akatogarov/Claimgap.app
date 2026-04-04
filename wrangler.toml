@@ -1,17 +1,18 @@
 # Cloudflare Pages + Next.js (@cloudflare/next-on-pages)
-# https://developers.cloudflare.com/pages/functions/wrangler-configuration/
+# https://github.com/cloudflare/next-on-pages
 #
 # IMPORTANT:
-# - Build: `npm run cf:build` (NOT `npm run build` alone).
-# - Deploy: if required, use `npm run cf:deploy` (`wrangler pages deploy .vercel/output/static`).
-#   Never `npx wrangler deploy` (Workers only).
+# - Build: `npm run deploy` (сборка Next.js + генерация Cloudflare Pages)
+# - Deploy: `npm run cf:deploy` (сборка + деплой)
 #
-# If deploy fails with "name mismatch", either rename the Pages project to match
-# or run: npx wrangler pages download config
+# Cloudflare Pages Dashboard settings:
+# - Build command: npm run deploy
+# - Build output directory: .vercel/output/static
+# - Environment variable: NODE_VERSION = 20
 
 name = "claimgap"
 compatibility_date = "2024-11-01"
 compatibility_flags = ["nodejs_compat"]
 
-# Default in docs is "./dist" — wrong for next-on-pages; must match dashboard "Build output directory"
+# @cloudflare/next-on-pages output directory
 pages_build_output_dir = "./.vercel/output/static"

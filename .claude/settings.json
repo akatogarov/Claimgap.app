@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls c:/Users/katog/claimgap.app/.env*)",
+      "Bash(node -e \"const c=require\\('crypto'\\); console.log\\('ADMIN_SECRET='+c.randomBytes\\(16\\).toString\\('hex'\\)\\); console.log\\('ADMIN_JWT_SECRET='+c.randomBytes\\(32\\).toString\\('hex'\\)\\);\")"
+    ],
+    "additionalDirectories": [
+      "c:\\Users\\katog\\claimgap.app\\src\\app\\api\\admin"
+    ]
+  }
+}
