@@ -5,10 +5,17 @@ on:
     branches: [main]
   workflow_dispatch:
 
+concurrency:
+  group: deploy-pages-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
     name: Build & Deploy
+
+    permissions:
+      contents: read
 
     steps:
       - name: Checkout
@@ -17,20 +24,21 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: "20"
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Build Next.js
-        run: npm run build
+      # One command: next build + next-on-pages (must match Cloudflare Pages dashboard if using Git builds there).
+      - name: Build Cloudflare Pages bundle
+        run: npm run deploy
         env:
-          NEXT_PUBLIC_URL: ${{ secrets.NEXT_PUBLIC_URL }}
+          CI: true
+          NODE_OPTIONS: --max-old-space-size=8192
+          # Production site; override in repo secrets if needed.
+          NEXT_PUBLIC_URL: ${{ secrets.NEXT_PUBLIC_URL || 'https://claimgap.app' }}
           NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY }}
-
-      - name: Generate Cloudflare Pages output
-        run: npx @cloudflare/next-on-pages
 
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3

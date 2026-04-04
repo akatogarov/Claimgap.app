@@ -14,7 +14,7 @@
 - Выберите: **Next.js**
 
 ### Build configuration
-- **Build command**: `npm run build && npx @cloudflare/next-on-pages`
+- **Build command**: `npm run deploy` (runs `next build` then `@cloudflare/next-on-pages`; same as GitHub Actions)
 - **Build output directory**: `.vercel/output/static`
 
 ### Environment variables (Production)
@@ -33,7 +33,7 @@ RESEND_FROM_EMAIL=your_email
 ADMIN_SECRET=your_secret
 ADMIN_JWT_SECRET=your_jwt_secret
 ADMIN_EMAILS=admin@example.com,admin2@example.com
-NEXT_PUBLIC_URL=https://your-domain.pages.dev
+NEXT_PUBLIC_URL=https://claimgap.app
 ```
 
 ## Шаг 3: Деплой
@@ -67,7 +67,7 @@ NEXT_PUBLIC_URL=https://your-domain.pages.dev
 
 Проверьте:
 - ✅ `NODE_VERSION=20` установлен в Environment Variables
-- ✅ Build command: `npm run build && npx @cloudflare/next-on-pages`
+- ✅ Build command: `npm run deploy`
 - ✅ Build output directory: `.vercel/output/static`
 
 ### Ошибки runtime

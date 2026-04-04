@@ -1,14 +1,13 @@
 # Cloudflare Pages + Next.js (@cloudflare/next-on-pages)
 # https://github.com/cloudflare/next-on-pages
 #
-# IMPORTANT:
-# - Build: `npm run deploy` (сборка Next.js + генерация Cloudflare Pages)
-# - Deploy: `npm run cf:deploy` (сборка + деплой)
+# Build: npm run deploy  →  output: .vercel/output/static
+# Deploy (CLI): npm run cf:deploy
 #
-# Cloudflare Pages Dashboard settings:
-# - Build command: npm run deploy
-# - Build output directory: .vercel/output/static
-# - Environment variable: NODE_VERSION = 20
+# Cloudflare Pages (Git) dashboard:
+# - Build command: npm run deploy   (same as GitHub Actions)
+# - Output directory: .vercel/output/static
+# - Env: NODE_VERSION=20, NEXT_PUBLIC_URL=https://claimgap.app, plus API keys (see CLOUDFLARE_SETUP.md)
 
 name = "claimgap"
 compatibility_date = "2024-11-01"

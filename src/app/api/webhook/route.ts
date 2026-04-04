@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { Resend } from "resend";
 import { getServiceSupabase } from "@/lib/supabase-server";
+import { publicSiteOrigin } from "@/lib/public-url";
 import { runFullAnalysis, defaultExtractedFacts } from "@/lib/anthropic";
 import type { FullAnalysis, StoredAnalysis } from "@/lib/types";
 
@@ -222,7 +223,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ received: true });
     }
 
-    const baseUrl = (process.env.NEXT_PUBLIC_URL ?? "http://localhost:3000").replace(/\/$/, "");
+    const baseUrl = publicSiteOrigin();
     const resultUrl = `${baseUrl}/result/${resolvedClaimId}`;
 
     const resendKey = process.env.RESEND_API_KEY;

@@ -3,6 +3,7 @@ import { Fraunces, Source_Sans_3 } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
+import { metadataBaseUrl } from "@/lib/public-url";
 
 /** Using Node.js runtime for better compatibility across platforms (Cloudflare, Vercel, etc.) */
 
@@ -22,7 +23,7 @@ export const metadata: Metadata = {
   title: "ClaimGap — Insurance claim gap analysis",
   description:
     "Upload your policy and settlement. We analyze the gap and generate a professional counter-offer letter.",
-  metadataBase: new URL(process.env.NEXT_PUBLIC_URL ?? "http://localhost:3000"),
+  metadataBase: metadataBaseUrl(),
 };
 
 export const viewport = {

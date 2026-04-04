@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { getServiceSupabase } from "@/lib/supabase-server";
+import { publicSiteOrigin } from "@/lib/public-url";
 
 export const runtime = 'edge';
 
@@ -38,7 +39,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "This claim is not awaiting payment." }, { status: 400 });
     }
 
-    const baseUrl = (process.env.NEXT_PUBLIC_URL ?? "http://localhost:3000").replace(/\/$/, "");
+    const baseUrl = publicSiteOrigin();
 
     const stripe = stripeClient();
     const session = await stripe.checkout.sessions.create({

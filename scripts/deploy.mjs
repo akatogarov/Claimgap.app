@@ -1,31 +1,36 @@
 #!/usr/bin/env node
 
-import { execSync } from 'child_process';
+import { execSync } from "child_process";
+import { existsSync } from "fs";
+import { join } from "path";
 
-console.log('🚀 Starting deployment build for Cloudflare Pages...\n');
+const OUT = join(process.cwd(), ".vercel", "output", "static");
+
+console.log("Starting Cloudflare Pages build (Next.js + @cloudflare/next-on-pages)\n");
 
 try {
-  console.log('🔨 Building Next.js application...\n');
-  
-  // Запускаем сборку Next.js
-  execSync('npm run build', {
-    stdio: 'inherit',
-    env: { ...process.env }
+  execSync("npm run build", {
+    stdio: "inherit",
+    env: { ...process.env },
   });
-  
-  console.log('\n📦 Generating Cloudflare Pages output with @cloudflare/next-on-pages...\n');
-  
-  // Запускаем @cloudflare/next-on-pages
-  execSync('npx @cloudflare/next-on-pages', {
-    stdio: 'inherit',
-    env: { ...process.env }
+
+  console.log("\nGenerating Cloudflare Pages output with @cloudflare/next-on-pages...\n");
+
+  execSync("npx @cloudflare/next-on-pages", {
+    stdio: "inherit",
+    env: { ...process.env },
   });
-  
-  console.log('\n✅ Build completed successfully!');
-  console.log('📁 Output directory: .vercel/output/static');
-  console.log('\n💡 Deploy with: npm run cf:deploy');
-} catch (error) {
-  console.error('\n❌ Build failed!');
-  console.error('💡 Note: On Windows, build may fail locally. Use Cloudflare Pages Git integration instead.');
-  throw error;
+
+  if (!existsSync(OUT)) {
+    console.error("\nBuild failed: missing output directory:", OUT);
+    process.exit(1);
+  }
+
+  console.log("\nBuild completed successfully.");
+  console.log("Output directory:", OUT);
+  console.log("Deploy: npm run cf:deploy   or   wrangler pages deploy .vercel/output/static/");
+} catch {
+  console.error("\nBuild failed.");
+  console.error("On Windows, next-on-pages may fail locally; use GitHub Actions or WSL.");
+  process.exit(1);
 }
