@@ -4,6 +4,9 @@ import "./globals.css";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 
+/** Whole app on Edge so Vercel CLI emits edge in .vc-config (required by @cloudflare/next-on-pages). */
+export const runtime = "edge";
+
 const sans = Source_Sans_3({
   subsets: ["latin"],
   variable: "--font-sans",

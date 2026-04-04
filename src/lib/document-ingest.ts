@@ -28,8 +28,26 @@ export function validateFileMeta(size: number, fileName: string, mime: string): 
   return null;
 }
 
-/** Edge-safe PDF text extraction (no pdf-parse — it requires Node `fs`). */
+/**
+ * PDF text: try pdf-parse on Node (often better on tricky PDFs), then unpdf.
+ * pdf-parse is loaded with `webpackIgnore` so Edge bundles skip it (no `fs`); on Cloudflare the import fails and we use unpdf only.
+ */
+async function extractPdfWithNodeParse(buffer: ArrayBuffer): Promise<string | null> {
+  try {
+    const { default: pdfParse } = await import(/* webpackIgnore: true */ "pdf-parse");
+    const Buf = typeof Buffer !== "undefined" ? Buffer : null;
+    if (!Buf || typeof pdfParse !== "function") return null;
+    const data = await pdfParse(Buf.from(buffer));
+    const t = (data?.text ?? "").trim();
+    return t.length > 0 ? t : null;
+  } catch {
+    return null;
+  }
+}
+
 export async function extractPdfText(buffer: ArrayBuffer): Promise<string> {
+  const viaNode = await extractPdfWithNodeParse(buffer);
+  if (viaNode) return viaNode;
   const { text } = await unpdfExtract(new Uint8Array(buffer), { mergePages: true });
   return (text ?? "").trim();
 }
