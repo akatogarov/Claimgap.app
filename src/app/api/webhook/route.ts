@@ -109,7 +109,7 @@ function buildEmailHtml({
         <td style="background:#f5f3ef;border-top:1px solid #e5e2dc;padding:20px 32px;">
           <p style="margin:0;font-size:12px;color:#999;line-height:1.6;">
             <strong style="color:#555;">ClaimGap</strong> — Informational analysis only. Not legal, insurance, or financial advice.<br/>
-            Questions? <a href="mailto:support@claimgap.app" style="color:#1a1a2e;text-decoration:underline;">support@claimgap.app</a>
+            Questions? <a href="mailto:info@globaldeal.app" style="color:#1a1a2e;text-decoration:underline;">info@globaldeal.app</a>
           </p>
         </td>
       </tr>
@@ -119,6 +119,92 @@ function buildEmailHtml({
 </table>
 </body>
 </html>`;
+}
+
+function buildOutcomeEmailStep1(outcomeBaseUrl: string, claimId: string): string {
+  const sent = `${outcomeBaseUrl}?step=letter&answer=step1_sent`;
+  const pending = `${outcomeBaseUrl}?step=letter&answer=step1_pending`;
+  const dropped = `${outcomeBaseUrl}?step=letter&answer=step1_dropped`;
+  return `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Quick follow-up — ClaimGap</title></head>
+<body style="margin:0;padding:0;background:#f5f3ef;font-family:'Helvetica Neue',Arial,sans-serif;color:#1a1a2e;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f5f3ef;padding:40px 16px;">
+  <tr><td align="center">
+    <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#ffffff;border:1px solid #e5e2dc;border-radius:8px;overflow:hidden;">
+      <tr><td style="background:#1a1a2e;padding:24px 32px;">
+        <p style="margin:0;font-size:18px;font-weight:700;color:#ffffff;">ClaimGap</p>
+        <p style="margin:4px 0 0;font-size:12px;color:rgba(255,255,255,0.55);text-transform:uppercase;letter-spacing:0.05em;">Follow-up · Day 7</p>
+      </td></tr>
+      <tr><td style="padding:36px 32px;">
+        <p style="margin:0 0 8px;font-size:20px;font-weight:600;color:#1a1a2e;">Quick question about your dispute</p>
+        <p style="margin:0 0 28px;font-size:15px;color:#555571;line-height:1.6;">It&apos;s been about a week since you received your ClaimGap report. Did you send the dispute letter?</p>
+        <p style="margin:0 0 12px;font-size:13px;font-weight:700;color:#1a1a2e;text-transform:uppercase;letter-spacing:0.05em;">Tap your answer:</p>
+        <table width="100%" cellpadding="0" cellspacing="0">
+          <tr><td style="padding:6px 0;">
+            <a href="${sent}" style="display:block;background:#1a1a2e;color:#ffffff;text-decoration:none;font-size:14px;font-weight:600;padding:14px 20px;border-radius:6px;text-align:center;">✓ Yes, I sent it</a>
+          </td></tr>
+          <tr><td style="padding:6px 0;">
+            <a href="${pending}" style="display:block;background:#ffffff;color:#1a1a2e;text-decoration:none;font-size:14px;font-weight:600;padding:14px 20px;border-radius:6px;text-align:center;border:2px solid #1a1a2e;">○ Not yet — still working on it</a>
+          </td></tr>
+          <tr><td style="padding:6px 0;">
+            <a href="${dropped}" style="display:block;background:#ffffff;color:#888;text-decoration:none;font-size:14px;padding:14px 20px;border-radius:6px;text-align:center;border:1px solid #ddd;">I decided not to dispute</a>
+          </td></tr>
+        </table>
+        <p style="margin:24px 0 0;font-size:12px;color:#aaa;">One click records your answer — no account needed.<br/>Claim ID: ${claimId}</p>
+      </td></tr>
+      <tr><td style="background:#f5f3ef;border-top:1px solid #e5e2dc;padding:20px 32px;">
+        <p style="margin:0;font-size:12px;color:#999;">ClaimGap — Informational analysis only. Not legal advice.</p>
+      </td></tr>
+    </table>
+  </td></tr>
+</table>
+</body></html>`;
+}
+
+function buildOutcomeEmailStep2(outcomeBaseUrl: string, claimId: string): string {
+  const won = `${outcomeBaseUrl}?step=result&answer=step2_won`;
+  const waiting = `${outcomeBaseUrl}?step=result&answer=step2_waiting`;
+  const denied = `${outcomeBaseUrl}?step=result&answer=step2_denied`;
+  const noAction = `${outcomeBaseUrl}?step=result&answer=step2_no_action`;
+  return `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>What happened? — ClaimGap</title></head>
+<body style="margin:0;padding:0;background:#f5f3ef;font-family:'Helvetica Neue',Arial,sans-serif;color:#1a1a2e;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f5f3ef;padding:40px 16px;">
+  <tr><td align="center">
+    <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#ffffff;border:1px solid #e5e2dc;border-radius:8px;overflow:hidden;">
+      <tr><td style="background:#1a1a2e;padding:24px 32px;">
+        <p style="margin:0;font-size:18px;font-weight:700;color:#ffffff;">ClaimGap</p>
+        <p style="margin:4px 0 0;font-size:12px;color:rgba(255,255,255,0.55);text-transform:uppercase;letter-spacing:0.05em;">Follow-up · Day 30</p>
+      </td></tr>
+      <tr><td style="padding:36px 32px;">
+        <p style="margin:0 0 8px;font-size:20px;font-weight:600;color:#1a1a2e;">What happened with your dispute?</p>
+        <p style="margin:0 0 28px;font-size:15px;color:#555571;line-height:1.6;">It&apos;s been about a month since you received your ClaimGap report. What was the outcome with your insurer?</p>
+        <p style="margin:0 0 12px;font-size:13px;font-weight:700;color:#1a1a2e;text-transform:uppercase;letter-spacing:0.05em;">Tap your answer:</p>
+        <table width="100%" cellpadding="0" cellspacing="0">
+          <tr><td style="padding:6px 0;">
+            <a href="${won}" style="display:block;background:#1a1a2e;color:#ffffff;text-decoration:none;font-size:14px;font-weight:600;padding:14px 20px;border-radius:6px;text-align:center;">💰 The insurer offered more money</a>
+          </td></tr>
+          <tr><td style="padding:6px 0;">
+            <a href="${waiting}" style="display:block;background:#ffffff;color:#1a1a2e;text-decoration:none;font-size:14px;font-weight:600;padding:14px 20px;border-radius:6px;text-align:center;border:2px solid #1a1a2e;">⏳ Still waiting for their response</a>
+          </td></tr>
+          <tr><td style="padding:6px 0;">
+            <a href="${denied}" style="display:block;background:#ffffff;color:#1a1a2e;text-decoration:none;font-size:14px;padding:14px 20px;border-radius:6px;text-align:center;border:1px solid #ddd;">✕ They denied or refused</a>
+          </td></tr>
+          <tr><td style="padding:6px 0;">
+            <a href="${noAction}" style="display:block;background:#ffffff;color:#888;text-decoration:none;font-size:14px;padding:14px 20px;border-radius:6px;text-align:center;border:1px solid #ddd;">— I never ended up sending the letter</a>
+          </td></tr>
+        </table>
+        <p style="margin:24px 0 0;font-size:12px;color:#aaa;">One click records your answer — no account needed.<br/>Claim ID: ${claimId}</p>
+      </td></tr>
+      <tr><td style="background:#f5f3ef;border-top:1px solid #e5e2dc;padding:20px 32px;">
+        <p style="margin:0;font-size:12px;color:#999;">ClaimGap — Informational analysis only. Not legal advice.</p>
+      </td></tr>
+    </table>
+  </td></tr>
+</table>
+</body></html>`;
 }
 
 export async function POST(request: Request) {
@@ -203,11 +289,13 @@ export async function POST(request: Request) {
       return NextResponse.json({ received: true });
     }
 
+    const paidAt = new Date().toISOString();
     const nextAnalysis: StoredAnalysis = {
       preview: analysis?.preview ?? null,
       full,
       extracted,
       extracted_facts: analysis?.extracted_facts,
+      paid_at: paidAt,
     };
 
     const { error: upErr } = await supabase
@@ -229,24 +317,58 @@ export async function POST(request: Request) {
     const resendKey = process.env.RESEND_API_KEY;
     if (resendKey) {
       const resend = new Resend(resendKey);
-      try {
-        const from = process.env.RESEND_FROM_EMAIL ?? "ClaimGap <onboarding@resend.dev>";
-        const insurer = claim.insurer ?? "your insurer";
-        const insuranceType = claim.insurance_type ?? "Insurance";
-        const gapMin = full.missed_money?.missed_amount_low ?? 0;
-        const gapMax = full.missed_money?.missed_amount_high ?? 0;
-        const gapRange = gapMax > 0
-          ? `$${gapMin.toLocaleString("en-US")} – $${gapMax.toLocaleString("en-US")}`
-          : "See your report";
+      const from = process.env.RESEND_FROM_EMAIL ?? "ClaimGap <onboarding@resend.dev>";
+      const insurer = claim.insurer ?? "your insurer";
+      const insuranceType = claim.insurance_type ?? "Insurance";
+      const gapMin = full.missed_money?.missed_amount_low ?? 0;
+      const gapMax = full.missed_money?.missed_amount_high ?? 0;
+      const gapRange = gapMax > 0
+        ? `$${gapMin.toLocaleString("en-US")} – $${gapMax.toLocaleString("en-US")}`
+        : "See your report";
+      const outcomeUrl = `${baseUrl}/outcome/${resolvedClaimId}`;
+      const DAY = 24 * 60 * 60 * 1000;
+      const at = (days: number) => new Date(Date.now() + days * DAY).toISOString();
 
+      // Immediate: report ready
+      try {
         await resend.emails.send({
           from,
           to: claim.email,
           subject: "Your ClaimGap analysis is ready — here's what we found",
           html: buildEmailHtml({ resultUrl, insurer, insuranceType, gapRange }),
         });
-      } catch (mailErr) {
-        console.error(mailErr);
+      } catch (e) { console.error("Email Day-0 failed:", e); }
+
+      // Full outcome sequence — scheduled. If user responds early, outcome page
+      // shows "already recorded" and the response is ignored (idempotent API).
+      const step1Emails: Array<{ days: number; subject: string }> = [
+        { days: 7,  subject: "Did you send the dispute letter? (ClaimGap follow-up)" },
+        { days: 14, subject: "Quick reminder — did you send your dispute letter?" },
+        { days: 21, subject: "Last chance to tell us — did the letter go out?" },
+        { days: 28, subject: "Final check — did you dispute your claim?" },
+      ];
+      for (const { days, subject } of step1Emails) {
+        try {
+          await (resend.emails.send as Function)({
+            from, to: claim.email, subject,
+            html: buildOutcomeEmailStep1(outcomeUrl, resolvedClaimId),
+            scheduledAt: at(days),
+          });
+        } catch (e) { console.error(`Email Day-${days} step1 failed:`, e); }
+      }
+
+      const step2Emails: Array<{ days: number; subject: string }> = [
+        { days: 35, subject: "What happened with your insurance dispute? (ClaimGap)" },
+        { days: 60, subject: "Final follow-up — what was the outcome of your claim?" },
+      ];
+      for (const { days, subject } of step2Emails) {
+        try {
+          await (resend.emails.send as Function)({
+            from, to: claim.email, subject,
+            html: buildOutcomeEmailStep2(outcomeUrl, resolvedClaimId),
+            scheduledAt: at(days),
+          });
+        } catch (e) { console.error(`Email Day-${days} step2 failed:`, e); }
       }
     }
   }

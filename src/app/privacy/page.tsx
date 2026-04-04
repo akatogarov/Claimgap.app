@@ -162,8 +162,8 @@ export default function PrivacyPage() {
             </ul>
             <p>
               To exercise any of these rights, email{" "}
-              <a href="mailto:support@claimgap.app" className="text-navy underline">
-                support@claimgap.app
+              <a href="mailto:info@globaldeal.app" className="text-navy underline">
+                info@globaldeal.app
               </a>{" "}
               with &quot;Privacy Request&quot; in the subject line. We will respond within 10 business days.
             </p>
@@ -201,8 +201,8 @@ export default function PrivacyPage() {
           <h2 className="font-display font-medium text-navy">Privacy questions or requests</h2>
           <p className="mt-2 text-sm text-ink-muted">
             Contact us at{" "}
-            <a href="mailto:support@claimgap.app" className="text-navy underline">
-              support@claimgap.app
+            <a href="mailto:info@globaldeal.app" className="text-navy underline">
+              info@globaldeal.app
             </a>{" "}
             — subject line: &quot;Privacy Request&quot;.
             <br />

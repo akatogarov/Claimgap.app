@@ -305,8 +305,8 @@ function MarkdownPaidReport({
         <p className="text-xs leading-relaxed text-ink-faint">{full.disclaimer}</p>
         <p className="mt-3 text-xs text-ink-faint">
           Questions?{" "}
-          <a href="mailto:support@claimgap.app" className="underline text-navy">
-            support@claimgap.app
+          <a href="mailto:info@globaldeal.app" className="underline text-navy">
+            info@globaldeal.app
           </a>
         </p>
       </div>
@@ -636,8 +636,8 @@ function FullReport({
         <p className="text-xs leading-relaxed text-ink-faint">{full.disclaimer}</p>
         <p className="mt-3 text-xs text-ink-faint">
           Questions?{" "}
-          <a href="mailto:support@claimgap.app" className="underline text-navy">
-            support@claimgap.app
+          <a href="mailto:info@globaldeal.app" className="underline text-navy">
+            info@globaldeal.app
           </a>
         </p>
       </div>
@@ -722,8 +722,8 @@ export function ResultClient({
         </p>
         <p className="mt-3 text-sm text-ink-muted">
           Email{" "}
-          <a href="mailto:support@claimgap.app" className="underline text-navy">
-            support@claimgap.app
+          <a href="mailto:info@globaldeal.app" className="underline text-navy">
+            info@globaldeal.app
           </a>{" "}
           for a full refund.
         </p>

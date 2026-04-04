@@ -31,7 +31,7 @@ export function SiteFooter() {
             <Link href="/privacy" className="transition hover:text-white">
               Privacy Policy
             </Link>
-            <a href="mailto:support@claimgap.app" className="transition hover:text-white">
+            <a href="mailto:info@globaldeal.app" className="transition hover:text-white">
               Contact
             </a>
           </div>

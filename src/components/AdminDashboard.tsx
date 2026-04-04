@@ -20,6 +20,19 @@ type ClaimRow = {
 
 type DailyPoint = { date: string; total: number; paid: number };
 
+type OutcomeStats = {
+  step1Total: number;
+  step1Sent: number;
+  step1Pending: number;
+  step1Dropped: number;
+  step2Total: number;
+  step2Won: number;
+  step2Waiting: number;
+  step2Denied: number;
+  step2NoAction: number;
+  totalRecovered: number;
+};
+
 type Stats = {
   total: number;
   paid: number;
@@ -31,6 +44,7 @@ type Stats = {
   byType: Record<string, number>;
   topStates: { state: string; count: number }[];
   dailyChart: DailyPoint[];
+  outcomeStats?: OutcomeStats;
 };
 
 type Health = {
@@ -42,6 +56,8 @@ type Health = {
   resendFrom: boolean;
   adminSecret: boolean;
   adminJwt: boolean;
+  adminEmails: boolean;
+  cronSecret: boolean;
   publicUrl: string | null;
 };
 
@@ -233,6 +249,8 @@ export function AdminDashboard() {
         health.resendFrom,
         health.adminSecret,
         health.adminJwt,
+        health.adminEmails,
+        health.cronSecret,
         health.publicUrl !== null,
       ].filter((v) => !v).length
     : 0;
@@ -446,6 +464,42 @@ export function AdminDashboard() {
             </div>
           </div>
 
+          {stats.outcomeStats && (stats.outcomeStats.step1Total > 0 || stats.outcomeStats.step2Total > 0) && (
+            <div className="rounded-xl border border-navy/10 bg-white p-5 mb-4">
+              <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-4">
+                Outcome Tracking
+              </p>
+              <div className="grid sm:grid-cols-2 gap-6">
+                {stats.outcomeStats.step1Total > 0 && (
+                  <div>
+                    <p className="text-xs font-semibold text-slate-600 mb-2">Day 7 — Letter sent? ({stats.outcomeStats.step1Total} responses)</p>
+                    <div className="space-y-1.5 text-sm">
+                      <div className="flex justify-between"><span className="text-slate-700">✓ Sent it</span><span className="font-semibold">{stats.outcomeStats.step1Sent}</span></div>
+                      <div className="flex justify-between"><span className="text-slate-700">○ Not yet</span><span className="font-semibold">{stats.outcomeStats.step1Pending}</span></div>
+                      <div className="flex justify-between"><span className="text-slate-700">✕ Decided not to</span><span className="font-semibold">{stats.outcomeStats.step1Dropped}</span></div>
+                    </div>
+                  </div>
+                )}
+                {stats.outcomeStats.step2Total > 0 && (
+                  <div>
+                    <p className="text-xs font-semibold text-slate-600 mb-2">Day 30 — Result ({stats.outcomeStats.step2Total} responses)</p>
+                    <div className="space-y-1.5 text-sm">
+                      <div className="flex justify-between"><span className="text-slate-700">💰 Got more money</span><span className="font-semibold text-emerald-700">{stats.outcomeStats.step2Won}</span></div>
+                      <div className="flex justify-between"><span className="text-slate-700">⏳ Still waiting</span><span className="font-semibold">{stats.outcomeStats.step2Waiting}</span></div>
+                      <div className="flex justify-between"><span className="text-slate-700">✕ Denied</span><span className="font-semibold">{stats.outcomeStats.step2Denied}</span></div>
+                      <div className="flex justify-between"><span className="text-slate-700">— No action</span><span className="font-semibold">{stats.outcomeStats.step2NoAction}</span></div>
+                    </div>
+                    {stats.outcomeStats.totalRecovered > 0 && (
+                      <p className="mt-3 text-xs text-emerald-700 font-semibold">
+                        Total reported recovered: {usd(stats.outcomeStats.totalRecovered)}
+                      </p>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
           <div className="rounded-xl border border-navy/10 bg-white p-5">
             <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-1">
               Last 7 Days
@@ -515,6 +569,16 @@ export function AdminDashboard() {
               label="ADMIN_JWT_SECRET"
               ok={health.adminJwt}
               note="Secret for signing admin session tokens."
+            />
+            <HealthRow
+              label="ADMIN_EMAILS"
+              ok={health.adminEmails}
+              note="Comma-separated admin emails, e.g. info@globaldeal.app — required to log in to this panel."
+            />
+            <HealthRow
+              label="CRON_SECRET"
+              ok={health.cronSecret}
+              note="Secures /api/cron/outcome-emails. Set any random string; Vercel sends it as Authorization: Bearer."
             />
           </div>
 

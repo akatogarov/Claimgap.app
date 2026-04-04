@@ -227,10 +227,6 @@ export function PreviewClient({ claimId }: { claimId: string }) {
             <div key={i} className="rounded-lg border border-rust/15 bg-white p-4 text-left">
               <p className="text-xs font-bold uppercase tracking-wide text-rust">{area.title || titles[i] || `Area ${i + 1}`}</p>
               <p className="mt-3 text-sm leading-relaxed text-ink">{previewBlurb(area)}</p>
-              <p className="mt-3 text-sm font-medium text-rust">
-                {area.gap_anchor_label ||
-                  (area.estimated_gap_upper > 0 ? `Up to ${usd(area.estimated_gap_upper)} (estimated)` : "")}
-              </p>
             </div>
           ))}
         </div>
@@ -297,7 +293,7 @@ export function PreviewClient({ claimId }: { claimId: string }) {
               <span className="font-display text-5xl font-medium text-navy">$149</span>
               <span className="text-sm text-ink-muted">once</span>
             </div>
-            <p className="mt-1 text-sm text-ink-muted">One-time · Not useful? Full refund within 30 days</p>
+            <p className="mt-1 text-sm text-ink-muted">One-time · If your report doesn&apos;t identify a real gap, email us and we refund in full within 30 days.</p>
           </div>
           <div className="flex flex-col gap-2">
             <LoadingButton

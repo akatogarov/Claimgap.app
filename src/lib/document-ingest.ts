@@ -29,6 +29,54 @@ export function validateFileMeta(size: number, fileName: string, mime: string): 
 }
 
 /**
+ * PDF text via Claude's native document block — handles scanned/image-based PDFs.
+ */
+async function extractPdfWithClaude(buffer: ArrayBuffer): Promise<string> {
+  const key = process.env.ANTHROPIC_API_KEY;
+  if (!key) return "";
+  try {
+    const bytes = new Uint8Array(buffer);
+    let binary = "";
+    for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]);
+    const base64 = btoa(binary);
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "x-api-key": key,
+        "anthropic-version": "2023-06-01",
+      },
+      body: JSON.stringify({
+        model: "claude-haiku-4-5-20251001",
+        max_tokens: 4096,
+        messages: [
+          {
+            role: "user",
+            content: [
+              {
+                type: "document",
+                source: { type: "base64", media_type: "application/pdf", data: base64 },
+              },
+              {
+                type: "text",
+                text: "Extract every word of readable text from this PDF (insurance policy pages, letters, EOBs, settlement docs, etc.). Return plain text only — preserve approximate structure and line breaks. If there is no readable text, reply exactly: NO_TEXT_FOUND.",
+              },
+            ],
+          },
+        ],
+      }),
+    });
+    if (!res.ok) return "";
+    const data = (await res.json()) as { content?: Array<{ type: string; text?: string }> };
+    const text = data.content?.find((c) => c.type === "text")?.text?.trim() ?? "";
+    if (/^NO_TEXT_FOUND\.?$/i.test(text)) return "";
+    return text;
+  } catch {
+    return "";
+  }
+}
+
+/**
  * PDF text: try pdf-parse on Node (often better on tricky PDFs), then unpdf.
  * pdf-parse is loaded with `webpackIgnore` so Edge bundles skip it (no `fs`); on Cloudflare the import fails and we use unpdf only.
  */
@@ -47,9 +95,15 @@ async function extractPdfWithNodeParse(buffer: ArrayBuffer): Promise<string | nu
 
 export async function extractPdfText(buffer: ArrayBuffer): Promise<string> {
   const viaNode = await extractPdfWithNodeParse(buffer);
-  if (viaNode) return viaNode;
+  if (viaNode && viaNode.length >= 100) return viaNode;
+
   const { text } = await unpdfExtract(new Uint8Array(buffer), { mergePages: true });
-  return (text ?? "").trim();
+  const viaUnpdf = (text ?? "").trim();
+  if (viaUnpdf.length >= 100) return viaUnpdf;
+
+  // Scanned / image-based PDF fallback: use Claude's native PDF vision
+  const viaClaude = await extractPdfWithClaude(buffer);
+  return viaClaude || viaUnpdf || viaNode || "";
 }
 
 function arrayBufferToBase64(buffer: ArrayBuffer): string {

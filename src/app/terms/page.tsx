@@ -52,8 +52,8 @@ export default function TermsPage() {
             <p>
               <strong>Satisfaction guarantee:</strong> If the full report identifies no material
               underpayment gap in your claim, you are entitled to a full refund. Email{" "}
-              <a href="mailto:support@claimgap.app" className="text-navy underline">
-                support@claimgap.app
+              <a href="mailto:info@globaldeal.app" className="text-navy underline">
+                info@globaldeal.app
               </a>{" "}
               within 30 days of purchase with your claim ID. We will review and process eligible
               refunds within 5 business days.
@@ -190,8 +190,8 @@ export default function TermsPage() {
           <h2 className="font-display text-xl font-medium text-navy">Questions?</h2>
           <p className="mt-2 text-sm text-ink-muted">
             Email us at{" "}
-            <a href="mailto:support@claimgap.app" className="text-navy underline">
-              support@claimgap.app
+            <a href="mailto:info@globaldeal.app" className="text-navy underline">
+              info@globaldeal.app
             </a>
             . We typically respond within 1–2 business days.
           </p>

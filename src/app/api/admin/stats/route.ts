@@ -77,6 +77,34 @@ export async function GET() {
     }
     const dailyChart = Object.entries(daily).map(([date, v]) => ({ date, ...v }));
 
+    // Outcome stats
+    const { data: outcomeRows } = await supabase
+      .from("outcomes")
+      .select("result, additional_amount");
+
+    const outcomes = (outcomeRows ?? []).filter(
+      (o) => !o.result.startsWith("reminder_")
+    );
+    const step1 = outcomes.filter((o) => o.result.startsWith("step1_"));
+    const step2 = outcomes.filter((o) => o.result.startsWith("step2_"));
+    const wonRows = step2.filter((o) => o.result === "step2_won");
+    const totalRecovered = wonRows.reduce(
+      (s, o) => s + (typeof o.additional_amount === "number" ? o.additional_amount : 0),
+      0
+    );
+    const outcomeStats = {
+      step1Total: step1.length,
+      step1Sent: step1.filter((o) => o.result === "step1_sent").length,
+      step1Pending: step1.filter((o) => o.result === "step1_pending").length,
+      step1Dropped: step1.filter((o) => o.result === "step1_dropped").length,
+      step2Total: step2.length,
+      step2Won: wonRows.length,
+      step2Waiting: step2.filter((o) => o.result === "step2_waiting").length,
+      step2Denied: step2.filter((o) => o.result === "step2_denied").length,
+      step2NoAction: step2.filter((o) => o.result === "step2_no_action").length,
+      totalRecovered,
+    };
+
     // Health checks
     const health = {
       anthropic: !!process.env.ANTHROPIC_API_KEY,
@@ -87,6 +115,8 @@ export async function GET() {
       resendFrom: !!process.env.RESEND_FROM_EMAIL,
       adminSecret: !!process.env.ADMIN_SECRET,
       adminJwt: !!process.env.ADMIN_JWT_SECRET,
+      adminEmails: !!process.env.ADMIN_EMAILS,
+      cronSecret: !!process.env.CRON_SECRET,
       publicUrl: process.env.NEXT_PUBLIC_URL ?? null,
     };
 
@@ -102,6 +132,7 @@ export async function GET() {
         byType,
         topStates,
         dailyChart,
+        outcomeStats,
       },
       health,
     });

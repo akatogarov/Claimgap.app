@@ -127,6 +127,8 @@ export interface StoredAnalysis {
     pending: boolean;
     questions: ClarificationQuestion[];
   };
+  /** ISO timestamp set when the claim moves to paid status. Used by outcome reminder cron. */
+  paid_at?: string;
 }
 
 export interface ClaimRow {
