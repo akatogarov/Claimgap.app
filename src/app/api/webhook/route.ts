@@ -5,6 +5,8 @@ import { getServiceSupabase } from "@/lib/supabase-server";
 import { runFullAnalysis, defaultExtractedFacts } from "@/lib/anthropic";
 import type { FullAnalysis, StoredAnalysis } from "@/lib/types";
 
+export const runtime = 'edge';
+
 function stripeClient() {
   const raw = process.env.STRIPE_SECRET_KEY;
   if (!raw?.trim()) throw new Error("Missing STRIPE_SECRET_KEY");
@@ -31,7 +33,7 @@ export async function POST(request: Request) {
   let event: Stripe.Event;
   try {
     const stripe = stripeClient();
-    event = stripe.webhooks.constructEvent(rawBody, sig, whSecret);
+    event = await stripe.webhooks.constructEventAsync(rawBody, sig, whSecret);
   } catch (err) {
     console.error(err);
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });

@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { getServiceSupabase } from "@/lib/supabase-server";
+
+export const runtime = 'edge';
 import {
   runDocumentExtraction,
   runPreviewAnalysis,

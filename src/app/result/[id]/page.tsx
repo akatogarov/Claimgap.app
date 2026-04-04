@@ -1,5 +1,7 @@
 import { ResultClient } from "@/components/ResultClient";
 
+export const runtime = 'edge';
+
 export const metadata = {
   title: "Your analysis — ClaimGap",
 };

@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { getServiceSupabase } from "@/lib/supabase-server";
 
+export const runtime = 'edge';
+
 function stripeClient() {
   const raw = process.env.STRIPE_SECRET_KEY;
   if (!raw?.trim()) {

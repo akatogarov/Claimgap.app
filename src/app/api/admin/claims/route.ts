@@ -3,6 +3,9 @@ import { cookies } from "next/headers";
 import { verifyAdminToken, ADMIN_COOKIE_NAME } from "@/lib/admin-auth";
 import { getServiceSupabase } from "@/lib/supabase-server";
 
+export const runtime = 'edge';
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     const token = cookies().get(ADMIN_COOKIE_NAME)?.value;
