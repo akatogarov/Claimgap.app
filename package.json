@@ -28,6 +28,7 @@
     "remark-gfm": "^4.0.1",
     "resend": "^4.0.1",
     "stripe": "^17.4.0",
+    "tweetsodium": "^0.0.4",
     "unpdf": "^0.12.1"
   },
   "devDependencies": {
@@ -45,6 +46,6 @@
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.15",
     "typescript": "^5.7.2",
-    "wrangler": "^3.93.0"
+    "wrangler": "^4.80.0"
   }
 }
