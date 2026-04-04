@@ -18,6 +18,108 @@ function stripeClient() {
   });
 }
 
+function buildEmailHtml({
+  resultUrl,
+  insurer,
+  insuranceType,
+  gapRange,
+}: {
+  resultUrl: string;
+  insurer: string;
+  insuranceType: string;
+  gapRange: string;
+}): string {
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Your ClaimGap analysis is ready</title>
+</head>
+<body style="margin:0;padding:0;background:#f5f3ef;font-family:'Helvetica Neue',Arial,sans-serif;color:#1a1a2e;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f5f3ef;padding:40px 16px;">
+  <tr><td align="center">
+    <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#ffffff;border:1px solid #e5e2dc;border-radius:8px;overflow:hidden;">
+
+      <!-- Header -->
+      <tr>
+        <td style="background:#1a1a2e;padding:24px 32px;">
+          <p style="margin:0;font-size:18px;font-weight:700;color:#ffffff;letter-spacing:-0.3px;">ClaimGap</p>
+          <p style="margin:4px 0 0;font-size:12px;color:rgba(255,255,255,0.55);letter-spacing:0.05em;text-transform:uppercase;">Full Paid Report</p>
+        </td>
+      </tr>
+
+      <!-- Body -->
+      <tr>
+        <td style="padding:36px 32px;">
+          <p style="margin:0 0 8px;font-size:22px;font-weight:600;color:#1a1a2e;line-height:1.3;">Your analysis is ready.</p>
+          <p style="margin:0 0 24px;font-size:15px;color:#555571;line-height:1.6;">
+            We reviewed your <strong style="color:#1a1a2e;">${insuranceType}</strong> claim with <strong style="color:#1a1a2e;">${insurer}</strong> and found potential underpayment.
+          </p>
+
+          <!-- Gap callout -->
+          <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:28px;">
+            <tr>
+              <td style="background:#fdf2f0;border:1px solid rgba(194,76,60,0.25);border-radius:6px;padding:20px 24px;">
+                <p style="margin:0 0 4px;font-size:11px;font-weight:700;color:#c24c3c;letter-spacing:0.1em;text-transform:uppercase;">Estimated underpayment range</p>
+                <p style="margin:0;font-size:28px;font-weight:700;color:#c24c3c;letter-spacing:-0.5px;">${gapRange}</p>
+                <p style="margin:6px 0 0;font-size:12px;color:#9a5c56;">Conservative estimate from your documents — not a guarantee.</p>
+              </td>
+            </tr>
+          </table>
+
+          <!-- What's inside -->
+          <p style="margin:0 0 12px;font-size:13px;font-weight:700;color:#1a1a2e;letter-spacing:0.05em;text-transform:uppercase;">Your full report includes:</p>
+          <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:28px;">
+            ${[
+              "Ready-to-send dispute letter",
+              "Step-by-step 21-day escalation plan",
+              "Evidence checklist for your case",
+              "State-specific rights & regulator contacts",
+              "Full policy gap analysis with citations",
+            ].map(item => `
+            <tr>
+              <td style="padding:6px 0;border-bottom:1px solid #f0ede8;">
+                <span style="color:#2d7a6e;font-weight:bold;margin-right:10px;">✓</span>
+                <span style="font-size:14px;color:#1a1a2e;">${item}</span>
+              </td>
+            </tr>`).join("")}
+          </table>
+
+          <!-- CTA -->
+          <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:28px;">
+            <tr>
+              <td align="center">
+                <a href="${resultUrl}" style="display:inline-block;background:#1a1a2e;color:#ffffff;text-decoration:none;font-size:15px;font-weight:700;padding:16px 40px;border-radius:6px;letter-spacing:-0.2px;">
+                  View my full report →
+                </a>
+              </td>
+            </tr>
+          </table>
+
+          <p style="margin:0;font-size:13px;color:#888899;line-height:1.6;">
+            Keep this link safe — it's your permanent access to the report. You can also print or save it as a PDF from the report page.
+          </p>
+        </td>
+      </tr>
+
+      <!-- Footer -->
+      <tr>
+        <td style="background:#f5f3ef;border-top:1px solid #e5e2dc;padding:20px 32px;">
+          <p style="margin:0;font-size:12px;color:#999;line-height:1.6;">
+            <strong style="color:#555;">ClaimGap</strong> — Informational analysis only. Not legal, insurance, or financial advice.<br/>
+            Questions? <a href="mailto:support@claimgap.app" style="color:#1a1a2e;text-decoration:underline;">support@claimgap.app</a>
+          </p>
+        </td>
+      </tr>
+
+    </table>
+  </td></tr>
+</table>
+</body>
+</html>`;
+}
+
 export async function POST(request: Request) {
   const whSecret = process.env.STRIPE_WEBHOOK_SECRET;
   if (!whSecret) {
@@ -128,11 +230,19 @@ export async function POST(request: Request) {
       const resend = new Resend(resendKey);
       try {
         const from = process.env.RESEND_FROM_EMAIL ?? "ClaimGap <onboarding@resend.dev>";
+        const insurer = claim.insurer ?? "your insurer";
+        const insuranceType = claim.insurance_type ?? "Insurance";
+        const gapMin = full.missed_money?.missed_amount_low ?? 0;
+        const gapMax = full.missed_money?.missed_amount_high ?? 0;
+        const gapRange = gapMax > 0
+          ? `$${gapMin.toLocaleString("en-US")} – $${gapMax.toLocaleString("en-US")}`
+          : "See your report";
+
         await resend.emails.send({
           from,
           to: claim.email,
-          subject: "Your ClaimGap analysis is ready",
-          html: `<p>Hi,</p><p>Your full claim analysis is ready. View it here:</p><p><a href="${resultUrl}">${resultUrl}</a></p><p>— ClaimGap</p>`,
+          subject: "Your ClaimGap analysis is ready — here's what we found",
+          html: buildEmailHtml({ resultUrl, insurer, insuranceType, gapRange }),
         });
       } catch (mailErr) {
         console.error(mailErr);

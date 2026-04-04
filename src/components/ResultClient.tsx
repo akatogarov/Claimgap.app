@@ -147,7 +147,7 @@ const PROCESSING_STEPS = [
   "Generating your report...",
 ] as const;
 
-function ProcessingScreen({ sessionId }: { sessionId?: string }) {
+function ProcessingScreen({ sessionId, claimId }: { sessionId?: string; claimId: string }) {
   const [done, setDone] = useState(1);
   useEffect(() => {
     const max = PROCESSING_STEPS.length - 1;
@@ -158,7 +158,7 @@ function ProcessingScreen({ sessionId }: { sessionId?: string }) {
   if (!sessionId) {
     return (
       <div className="rounded-lg border border-rust/25 bg-rust-faint px-4 py-4 text-rust">
-        <Link href="#" className="font-semibold underline">
+        <Link href={`/preview/${claimId}`} className="font-semibold underline">
           This report is not unlocked yet. Return to preview.
         </Link>
       </div>
@@ -710,7 +710,7 @@ export function ResultClient({
   }
 
   if (claim.status === "preview") {
-    return <ProcessingScreen sessionId={sessionId} />;
+    return <ProcessingScreen sessionId={sessionId} claimId={claimId} />;
   }
 
   if (claim.status === "failed" || claim.error) {
