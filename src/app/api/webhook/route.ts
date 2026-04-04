@@ -5,8 +5,6 @@ import { getServiceSupabase } from "@/lib/supabase-server";
 import { runFullAnalysis, defaultExtractedFacts } from "@/lib/anthropic";
 import type { FullAnalysis, StoredAnalysis } from "@/lib/types";
 
-export const runtime = "edge";
-
 function stripeClient() {
   const raw = process.env.STRIPE_SECRET_KEY;
   if (!raw?.trim()) throw new Error("Missing STRIPE_SECRET_KEY");

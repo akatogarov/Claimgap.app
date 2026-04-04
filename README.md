@@ -25,20 +25,23 @@ npm run cf:deploy
 ```
 
 Или настройте автоматический деплой в Cloudflare Pages Dashboard:
-- **Build command**: `npm run deploy`
-- **Build output directory**: `.worker-next`
+- **Build command**: `npm run build && npx @cloudflare/next-on-pages`
+- **Build output directory**: `.vercel/output/static`
 - **Environment variable**: `NODE_VERSION = 20`
+
+⚠️ **На Windows** локальная сборка может не работать - используйте Git integration в Cloudflare Pages.
 
 Подробнее см. [DEPLOY.md](./DEPLOY.md)
 
 ## Технологии
 
-- **Next.js 14** - React фреймворк
-- **OpenNext** - адаптер для Cloudflare Pages
-- **Supabase** - база данных
-- **Anthropic Claude** - AI для анализа
+- **Next.js 14** (Node.js runtime) - React фреймворк
+- **@cloudflare/next-on-pages** - адаптер для Cloudflare Pages
+- **Supabase** - PostgreSQL база данных + Storage
+- **Anthropic Claude** - AI для анализа документов
 - **Stripe** - платежи
 - **Resend** - email рассылка
+- **unpdf / pdf-parse** - парсинг PDF файлов
 
 ## Структура проекта
 

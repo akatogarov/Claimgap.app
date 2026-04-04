@@ -1,7 +1,5 @@
 import { OutcomeForm } from "@/components/OutcomeForm";
 
-export const runtime = "edge";
-
 export const metadata = {
   title: "Outcome — ClaimGap",
 };

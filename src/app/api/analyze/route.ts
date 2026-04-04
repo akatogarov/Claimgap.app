@@ -15,8 +15,6 @@ import {
 import { getBlobFromFormEntry } from "@/lib/pdf-validate";
 import type { InsuranceType, StoredAnalysis } from "@/lib/types";
 
-export const runtime = "edge";
-
 const MAX_STORE = 400_000;
 
 type SlotDef = { key: string; label: string; required: boolean };

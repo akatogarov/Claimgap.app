@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
 import { getServiceSupabase } from "@/lib/supabase-server";
 
-export const runtime = "edge";
-
 export async function POST(request: Request) {
   try {
     const body = await request.json().catch(() => ({}));

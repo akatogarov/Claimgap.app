@@ -2,8 +2,6 @@ import { NextResponse } from "next/server";
 import { getServiceSupabase } from "@/lib/supabase-server";
 import type { ClaimRow, StoredAnalysis } from "@/lib/types";
 
-export const runtime = "edge";
-
 export async function GET(
   _request: Request,
   context: { params: { id: string } }
