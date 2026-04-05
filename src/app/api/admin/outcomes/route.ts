@@ -35,10 +35,11 @@ export async function GET() {
       : { data: [] };
 
     // Group outcomes by claim
-    const outcomeMap: Record<string, typeof outcomes> = {};
-    for (const o of outcomes ?? []) {
+    type OutcomeItem = { claim_id: string; result: string; additional_amount: number | null; reported_at: string };
+    const outcomeMap: Record<string, OutcomeItem[]> = {};
+    for (const o of (outcomes ?? []) as OutcomeItem[]) {
       if (!outcomeMap[o.claim_id]) outcomeMap[o.claim_id] = [];
-      outcomeMap[o.claim_id]!.push(o);
+      outcomeMap[o.claim_id].push(o);
     }
 
     const rows = (claims ?? []).map((c) => {
