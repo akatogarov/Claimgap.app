@@ -112,7 +112,7 @@ export default function TermsPage() {
 
         {/* ── 5. Data handling ──────────────────────────────── */}
         <section>
-          <h2 className="font-display text-xl font-medium text-navy">5. Data handling and deletion</h2>
+          <h2 className="font-display text-xl font-medium text-navy">5. Data handling, anonymized analytics, and data sharing</h2>
           <div className="mt-4 space-y-3 text-sm leading-relaxed">
             <p>
               <strong>Document deletion:</strong> Your uploaded PDF files (policy and settlement
@@ -125,6 +125,16 @@ export default function TermsPage() {
               counter-offer letter text, etc.) is retained in our database to enable you to access
               your report and to improve our aggregate analysis models over time. This data is
               anonymized before any aggregation.
+            </p>
+            <p>
+              <strong>Aggregated and anonymized data:</strong> We may compile, aggregate, and
+              de-identify claim metadata (insurer name, state, claim type, settlement amount ranges,
+              underpayment patterns) to produce statistical insights about insurance market
+              practices. This aggregated, de-identified data <strong>does not include</strong> your
+              name, email address, or any other personal identifier, and cannot reasonably be used
+              to identify you. We may share or license such aggregated data with third-party
+              business partners, research organizations, or industry participants. We will never
+              sell your personal data.
             </p>
             <p>
               <strong>Your email address</strong> is retained to deliver your report and optional

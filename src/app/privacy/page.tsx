@@ -101,8 +101,39 @@ export default function PrivacyPage() {
               </li>
             </ul>
             <p>
-              We <strong>do not</strong> sell, rent, or share your personal information with third
-              parties for marketing purposes.
+              We <strong>do not</strong> sell, rent, or share your <em>personal information</em>{" "}
+              with third parties for marketing purposes. See Section 3a for our aggregated data
+              practices.
+            </p>
+          </div>
+        </section>
+
+        {/* ── 3a. Aggregated data sharing ───────────────────── */}
+        <section>
+          <h2 className="font-display text-xl font-medium text-navy">3a. Aggregated and de-identified data</h2>
+          <div className="mt-4 space-y-3 text-sm leading-relaxed">
+            <p>
+              We compile anonymized, aggregated statistics from claim metadata — including insurer
+              name, U.S. state, claim type, settlement amount ranges, and outcome patterns. This
+              dataset <strong>contains no personal identifiers</strong> (no name, no email, no
+              claim-specific text) and cannot reasonably be used to re-identify any individual.
+            </p>
+            <p>
+              We may share or license this aggregated, de-identified data with third parties such
+              as insurance industry research firms, consumer advocacy organizations, or enterprise
+              business partners. Any such sharing is limited to statistical summaries and does not
+              involve the transfer of personal data.
+            </p>
+            <p>
+              <strong>CCPA notice (California residents):</strong> The sharing of aggregated,
+              de-identified data as described above does not constitute a &quot;sale&quot; of personal
+              information under the California Consumer Privacy Act because it contains no personal
+              identifiers. You retain the right to opt out of any future data practices that would
+              qualify as a sale; to exercise this right, email{" "}
+              <a href="mailto:info@globaldeal.app" className="text-navy underline">
+                info@globaldeal.app
+              </a>
+              .
             </p>
           </div>
         </section>
@@ -125,7 +156,7 @@ export default function PrivacyPage() {
                   ["Anthropic (Claude API)", "AI analysis", "Document text (not trained on)"],
                   ["Stripe", "Payment processing", "Payment card details — we never see them"],
                   ["Resend", "Email delivery", "Your email address and report link"],
-                  ["Vercel / Cloudflare", "Hosting & CDN", "Request logs (standard)"],
+                  ["Cloudflare Pages", "Hosting & CDN", "Request logs (standard)"],
                 ].map(([service, purpose, receives]) => (
                   <tr key={service}>
                     <td className="px-4 py-3 text-xs font-medium text-ink">{service}</td>

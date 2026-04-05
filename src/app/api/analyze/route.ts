@@ -17,6 +17,7 @@ import {
   type LabeledChunk,
 } from "@/lib/document-ingest";
 import { getBlobFromFormEntry } from "@/lib/pdf-validate";
+import { normalizeInsurer } from "@/lib/normalize-insurer";
 import type { InsuranceType, StoredAnalysis } from "@/lib/types";
 
 const MAX_STORE = 400_000;
@@ -195,6 +196,7 @@ export async function POST(request: Request) {
           email,
           insurance_type,
           insurer: extracted.insurer_name || "Unable to determine from provided documents",
+          insurer_normalized: normalizeInsurer(extracted.insurer_name || ""),
           state: extracted.state || "Unable to determine from provided documents",
           description: `Awaiting clarification. Claim type: ${insurance_type}`,
           offer_amount,
@@ -248,6 +250,7 @@ export async function POST(request: Request) {
         email,
         insurance_type,
         insurer: preview.extracted.insurer_name || "Unable to determine from provided documents",
+        insurer_normalized: normalizeInsurer(preview.extracted.insurer_name || ""),
         state: preview.extracted.state || "Unable to determine from provided documents",
         description: preview.teaser_summary.slice(0, 2000),
         offer_amount: offerNum,

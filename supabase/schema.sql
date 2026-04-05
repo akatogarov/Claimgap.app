@@ -10,6 +10,7 @@ create table if not exists public.claims (
   email text not null,
   insurance_type text not null,
   insurer text not null,
+  insurer_normalized text,
   state text not null,
   description text not null,
   offer_amount numeric,
@@ -22,6 +23,10 @@ create table if not exists public.claims (
 
 create index if not exists claims_created_at_idx on public.claims (created_at desc);
 create index if not exists claims_status_idx on public.claims (status);
+create index if not exists claims_insurer_normalized_idx on public.claims (insurer_normalized);
+
+-- Migration: add insurer_normalized to existing tables
+alter table public.claims add column if not exists insurer_normalized text;
 
 create table if not exists public.outcomes (
   id uuid primary key default gen_random_uuid(),

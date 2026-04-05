@@ -73,7 +73,29 @@ type ClaimWithOutcomes = ClaimRow & {
   outcomes?: OutcomeRow[];
 };
 
-type Tab = "claims" | "outcomes" | "analytics" | "health";
+type InsightsFunnel = {
+  total_previews: number;
+  paid_reports: number;
+  preview_to_paid_pct: number;
+  letter_sent: number;
+  letter_response_rate: number;
+  disputes_won: number;
+  total_recovered: number;
+  avg_recovered: number;
+};
+
+type InsightsData = {
+  funnel: InsightsFunnel;
+  byInsurer: { insurer: string; total_claims: number; paid_reports: number; avg_gap: number | null; disputes_won: number; total_recovered: number }[];
+  byState: { state: string; total_claims: number; paid_reports: number; avg_gap: number | null }[];
+  byType: { type: string; total_claims: number; paid_reports: number; avg_gap: number | null; conversion_pct: number }[];
+  gapBuckets: Record<string, number>;
+  topUnderpaymentAreas: { area: string; count: number }[];
+  previewFeedback: { reason: string; count: number }[];
+  step2Breakdown: { won: number; waiting: number; denied: number; no_action: number };
+};
+
+type Tab = "claims" | "outcomes" | "analytics" | "insights" | "health";
 
 /* ─── Helpers ───────────────────────────────────────────────────────────── */
 
@@ -222,6 +244,10 @@ export function AdminDashboard() {
   const [outcomeLoaded, setOutcomeLoaded] = useState(false);
   const [outcomeFilter, setOutcomeFilter] = useState<string>("all");
 
+  // Insights tab
+  const [insights, setInsights] = useState<InsightsData | null>(null);
+  const [insightsLoaded, setInsightsLoaded] = useState(false);
+
   // Analytics + Health
   const [stats, setStats] = useState<Stats | null>(null);
   const [health, setHealth] = useState<Health | null>(null);
@@ -250,6 +276,15 @@ export function AdminDashboard() {
     setOutcomeRows(j.rows ?? []);
     setOutcomeLoaded(true);
   }, [outcomeLoaded]);
+
+  const loadInsights = useCallback(async () => {
+    if (insightsLoaded) return;
+    const res = await fetch("/api/admin/insights");
+    const j = await res.json();
+    if (!res.ok) throw new Error(j.error ?? "Error loading insights");
+    setInsights(j);
+    setInsightsLoaded(true);
+  }, [insightsLoaded]);
 
   async function deleteClaim(id: string) {
     if (!confirm("Delete this claim permanently? This cannot be undone.")) return;
@@ -284,10 +319,11 @@ export function AdminDashboard() {
     return () => { cancelled = true; };
   }, [loadClaims, loadStats, router]);
 
-  // Load outcomes lazily when tab is clicked
+  // Lazy load outcomes and insights tabs
   useEffect(() => {
     if (tab === "outcomes") loadOutcomes().catch(console.error);
-  }, [tab, loadOutcomes]);
+    if (tab === "insights") loadInsights().catch(console.error);
+  }, [tab, loadOutcomes, loadInsights]);
 
   async function logout() {
     await fetch("/api/admin/logout", { method: "POST" });
@@ -355,7 +391,7 @@ export function AdminDashboard() {
 
       {/* Tabs */}
       <div className="flex flex-wrap gap-1 border-b border-slate-200 mb-6">
-        {(["claims", "outcomes", "analytics", "health"] as Tab[]).map((t) => (
+        {(["claims", "outcomes", "analytics", "insights", "health"] as Tab[]).map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
@@ -708,6 +744,159 @@ export function AdminDashboard() {
             </p>
             <DailyBars data={stats.dailyChart} />
           </div>
+        </div>
+      )}
+
+      {/* ── INSIGHTS ───────────────────────────────────────────────────────── */}
+      {tab === "insights" && (
+        <div className="space-y-6">
+          {!insightsLoaded ? (
+            <div className="flex items-center gap-2 py-10 justify-center text-slate-500">
+              <span className="h-4 w-4 animate-spin rounded-full border-2 border-navy border-t-transparent" />
+              Loading insights…
+            </div>
+          ) : insights ? (
+            <>
+              {/* Funnel */}
+              <div className="rounded-xl border border-navy/10 bg-white p-5">
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-4">Conversion Funnel</p>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                  {[
+                    { label: "Previews", value: String(insights.funnel.total_previews) },
+                    { label: "Paid Reports", value: String(insights.funnel.paid_reports), sub: `${insights.funnel.preview_to_paid_pct}% conversion` },
+                    { label: "Letters Sent", value: String(insights.funnel.letter_sent), sub: `${insights.funnel.letter_response_rate}% response rate` },
+                    { label: "Disputes Won", value: String(insights.funnel.disputes_won), sub: insights.funnel.avg_recovered > 0 ? `avg ${usd(insights.funnel.avg_recovered)} recovered` : undefined },
+                  ].map(({ label, value, sub }) => (
+                    <div key={label} className="rounded-lg border border-navy/10 bg-paper p-4">
+                      <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">{label}</p>
+                      <p className="mt-1 text-2xl font-bold text-navy">{value}</p>
+                      {sub && <p className="mt-0.5 text-xs text-slate-400">{sub}</p>}
+                    </div>
+                  ))}
+                </div>
+                {insights.funnel.total_recovered > 0 && (
+                  <p className="mt-4 text-sm font-semibold text-emerald-700">
+                    Total reported recovered by users: {usd(insights.funnel.total_recovered)}
+                  </p>
+                )}
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-6">
+                {/* By Insurer */}
+                {insights.byInsurer.length > 0 && (
+                  <div className="rounded-xl border border-navy/10 bg-white p-5">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-3">By Insurer (top 20)</p>
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-xs">
+                        <thead className="text-slate-400 border-b border-slate-100">
+                          <tr>
+                            <th className="py-2 text-left font-medium">Insurer</th>
+                            <th className="py-2 text-right font-medium">Claims</th>
+                            <th className="py-2 text-right font-medium">Avg Gap</th>
+                            <th className="py-2 text-right font-medium">Won</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-50">
+                          {insights.byInsurer.map((r) => (
+                            <tr key={r.insurer}>
+                              <td className="py-1.5 text-slate-700 font-medium">{r.insurer}</td>
+                              <td className="py-1.5 text-right text-slate-500">{r.total_claims}</td>
+                              <td className="py-1.5 text-right text-slate-700">{r.avg_gap ? usd(r.avg_gap) : "—"}</td>
+                              <td className="py-1.5 text-right text-emerald-700">{r.disputes_won || "—"}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
+
+                {/* By State */}
+                {insights.byState.length > 0 && (
+                  <div className="rounded-xl border border-navy/10 bg-white p-5">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-3">By State (top 15)</p>
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-xs">
+                        <thead className="text-slate-400 border-b border-slate-100">
+                          <tr>
+                            <th className="py-2 text-left font-medium">State</th>
+                            <th className="py-2 text-right font-medium">Claims</th>
+                            <th className="py-2 text-right font-medium">Avg Gap</th>
+                            <th className="py-2 text-right font-medium">Paid</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-50">
+                          {insights.byState.map((r) => (
+                            <tr key={r.state}>
+                              <td className="py-1.5 text-slate-700 font-medium">{r.state}</td>
+                              <td className="py-1.5 text-right text-slate-500">{r.total_claims}</td>
+                              <td className="py-1.5 text-right text-slate-700">{r.avg_gap ? usd(r.avg_gap) : "—"}</td>
+                              <td className="py-1.5 text-right text-slate-500">{r.paid_reports}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-6">
+                {/* Top underpayment areas */}
+                {insights.topUnderpaymentAreas.length > 0 && (
+                  <div className="rounded-xl border border-navy/10 bg-white p-5">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-3">Top Underpayment Areas</p>
+                    <div className="space-y-2">
+                      {insights.topUnderpaymentAreas.map((a, i) => (
+                        <div key={i} className="flex items-center gap-3">
+                          <div className="flex-1 h-2 rounded-full bg-slate-100 overflow-hidden">
+                            <div className="h-full rounded-full bg-navy" style={{ width: `${Math.round((a.count / (insights.topUnderpaymentAreas[0]?.count || 1)) * 100)}%` }} />
+                          </div>
+                          <span className="text-xs text-slate-500 w-6 text-right">{a.count}</span>
+                          <span className="text-xs text-slate-700 w-48 truncate">{a.area}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                <div className="space-y-4">
+                  {/* By type */}
+                  <div className="rounded-xl border border-navy/10 bg-white p-5">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-3">By Claim Type</p>
+                    <div className="space-y-2">
+                      {insights.byType.map((r) => (
+                        <div key={r.type} className="flex items-center justify-between text-xs">
+                          <span className="text-slate-700 font-medium">{r.type}</span>
+                          <span className="text-slate-400">{r.total_claims} claims · {r.conversion_pct}% convert · {r.avg_gap ? usd(r.avg_gap) : "—"} avg gap</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Preview abandonment */}
+                  {insights.previewFeedback.length > 0 && (
+                    <div className="rounded-xl border border-navy/10 bg-white p-5">
+                      <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-3">Why They Didn&apos;t Buy</p>
+                      <div className="space-y-1.5">
+                        {insights.previewFeedback.map((r) => (
+                          <div key={r.reason} className="flex justify-between text-xs">
+                            <span className="text-slate-700">{r.reason}</span>
+                            <span className="font-semibold text-slate-500">{r.count}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <p className="text-xs text-slate-400">
+                All data is aggregated and anonymized — no emails or personal identifiers are shown here.
+                Safe for B2B sharing after removing the admin session.
+              </p>
+            </>
+          ) : null}
         </div>
       )}
 

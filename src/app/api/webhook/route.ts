@@ -4,6 +4,7 @@ import { Resend } from "resend";
 import { getServiceSupabase } from "@/lib/supabase-server";
 import { publicSiteOrigin } from "@/lib/public-url";
 import { runFullAnalysis, defaultExtractedFacts } from "@/lib/anthropic";
+import { normalizeInsurer } from "@/lib/normalize-insurer";
 import type { FullAnalysis, StoredAnalysis } from "@/lib/types";
 
 export const runtime = 'edge';
@@ -303,6 +304,7 @@ export async function POST(request: Request) {
       .update({
         status: "paid",
         analysis: nextAnalysis as unknown as Record<string, unknown>,
+        insurer_normalized: normalizeInsurer(claim.insurer ?? ""),
       })
       .eq("id", resolvedClaimId);
 
