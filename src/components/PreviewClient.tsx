@@ -40,6 +40,7 @@ export function PreviewClient({ claimId }: { claimId: string }) {
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [clarifyLoading, setClarifyLoading] = useState(false);
   const [clarifyErr, setClarifyErr] = useState<string | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -58,6 +59,13 @@ export function PreviewClient({ claimId }: { claimId: string }) {
     };
   }, [claimId]);
 
+  useEffect(() => {
+    fetch("/api/admin/check")
+      .then((r) => r.json())
+      .then((j) => { if (j.admin) setIsAdmin(true); })
+      .catch(() => {});
+  }, []);
+
   async function pay() {
     setPayLoading(true);
     setError(null);
@@ -72,6 +80,21 @@ export function PreviewClient({ claimId }: { claimId: string }) {
       if (j.url) window.location.href = j.url;
     } catch (e) {
       setError(e instanceof Error ? e.message : "Payment failed.");
+    } finally {
+      setPayLoading(false);
+    }
+  }
+
+  async function testPay() {
+    setPayLoading(true);
+    setError(null);
+    try {
+      const res = await fetch(`/api/admin/test-payment/${claimId}`, { method: "POST" });
+      const j = await res.json();
+      if (!res.ok) throw new Error(j.error ?? "Test payment failed.");
+      window.location.href = `/result/${claimId}`;
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Test payment failed.");
     } finally {
       setPayLoading(false);
     }
@@ -304,6 +327,15 @@ export function PreviewClient({ claimId }: { claimId: string }) {
               Get my full report — $149
             </LoadingButton>
             <p className="text-center text-xs text-ink-faint">Secure Stripe checkout · 30-day refund</p>
+            {isAdmin && (
+              <LoadingButton
+                onClick={testPay}
+                loading={payLoading}
+                className="mt-1 border border-amber-400 bg-amber-50 px-6 py-2 text-sm font-semibold text-amber-800 hover:bg-amber-100"
+              >
+                [Admin] Skip Payment — Test Mode
+              </LoadingButton>
+            )}
           </div>
         </div>
       </div>

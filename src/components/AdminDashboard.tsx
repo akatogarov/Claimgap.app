@@ -95,7 +95,7 @@ type InsightsData = {
   step2Breakdown: { won: number; waiting: number; denied: number; no_action: number };
 };
 
-type Tab = "claims" | "outcomes" | "analytics" | "insights" | "health";
+type Tab = "claims" | "outcomes" | "analytics" | "insights" | "health" | "test";
 
 /* ─── Helpers ───────────────────────────────────────────────────────────── */
 
@@ -391,7 +391,7 @@ export function AdminDashboard() {
 
       {/* Tabs */}
       <div className="flex flex-wrap gap-1 border-b border-slate-200 mb-6">
-        {(["claims", "outcomes", "analytics", "insights", "health"] as Tab[]).map((t) => (
+        {(["claims", "outcomes", "analytics", "insights", "health", "test"] as Tab[]).map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
@@ -992,6 +992,50 @@ export function AdminDashboard() {
             <p>3. <strong>Cloudflare Pages:</strong> Pages → claimgap → Settings → Environment Variables → add missing vars → Redeploy</p>
             <p>4. <strong>Outcome emails:</strong> scheduled automatically via Resend when user pays — Day 7, 14, 21, 28 (letter check) + Day 35, 60 (result check).</p>
             <p>5. <strong>Preview feedback:</strong> 1 email 24h after preview — asks why they didn&apos;t buy.</p>
+          </div>
+        </div>
+      )}
+
+      {/* ── TEST WORKFLOW ───────────────────────────────────────────────────── */}
+      {tab === "test" && (
+        <div className="max-w-2xl space-y-6">
+          <div className="rounded-xl border border-amber-300 bg-amber-50 p-5">
+            <p className="text-sm font-bold text-amber-800 mb-1">Test Workflow — Admin Only</p>
+            <p className="text-sm text-amber-700">
+              This lets you run a full end-to-end workflow without paying. On the preview page you will see an{" "}
+              <strong>[Admin] Skip Payment — Test Mode</strong> button that immediately triggers the full analysis and
+              redirects to the result page.
+            </p>
+          </div>
+
+          <div className="rounded-xl border border-navy/10 bg-white p-6 space-y-4">
+            <p className="text-sm font-semibold text-slate-700">How to test:</p>
+            <ol className="list-decimal list-inside space-y-2 text-sm text-slate-600">
+              <li>Click the button below to open the upload page.</li>
+              <li>Upload your test documents and submit — a real preview analysis will run.</li>
+              <li>
+                On the preview page, scroll to the payment section. You will see the normal{" "}
+                <em>Get my full report — $149</em> button <strong>plus</strong> an amber{" "}
+                <em>[Admin] Skip Payment — Test Mode</em> button below it (visible only while logged in as admin).
+              </li>
+              <li>Click the amber button. The full analysis will run and you will land on the result page — no Stripe charge.</li>
+            </ol>
+
+            <a
+              href="/analyze"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block mt-2 rounded-lg bg-navy px-6 py-3 text-sm font-semibold text-white hover:bg-navy-800 transition-colors"
+            >
+              Start test → /analyze
+            </a>
+          </div>
+
+          <div className="rounded-xl border border-slate-200 bg-slate-50 p-5 text-xs text-slate-600 space-y-1">
+            <p className="font-semibold text-slate-700 mb-1">Notes:</p>
+            <p>• The test claim appears in the Claims tab with status <em>paid</em> — delete it afterward if needed.</p>
+            <p>• No Stripe charge, no email is sent (emails are only triggered by the real Stripe webhook).</p>
+            <p>• The Skip Payment button only appears when the <code className="bg-slate-200 px-1 rounded">cg_admin</code> cookie is valid — it is invisible to regular users.</p>
           </div>
         </div>
       )}
