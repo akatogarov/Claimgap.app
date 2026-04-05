@@ -1,144 +1,128 @@
 import type { Metadata } from "next";
-import { ClaimLandingPage } from "@/components/ClaimLandingPage";
+import { SEOPageLayout } from "@/components/SEOPageLayout";
 
 export const metadata: Metadata = {
   title: "Car Insurance Claim Underpaid? What to Do",
   description:
-    "Find out if your car insurance payout is too low. Insurers routinely underestimate repair costs and miscalculate depreciation. Learn how to dispute and recover 15–35% more.",
+    "Your auto insurance settlement offer may be 20–40% too low. Learn how to spot a lowball car insurance payout, build your case, and negotiate a fair settlement.",
   alternates: { canonical: "/underpaid-car-insurance-claim" },
   openGraph: {
     url: "/underpaid-car-insurance-claim",
     title: "Car Insurance Claim Underpaid? What to Do",
     description:
-      "Most auto insurance first offers are 15–35% below what your policy covers. See the 5 signs your car claim was underpaid and how to dispute it today.",
+      "Auto insurance companies routinely undervalue total loss vehicles and collision claims. Here's how to check if your payout is short — and what to do about it.",
   },
-};
-
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "Article",
-      headline: "Car Insurance Claim Underpaid? What to Do",
-      description:
-        "How to identify and dispute an underpaid car insurance claim, including signs of underpayment and step-by-step dispute instructions.",
-      url: "https://claimgap.app/underpaid-car-insurance-claim",
-      publisher: {
-        "@type": "Organization",
-        name: "ClaimGap",
-        url: "https://claimgap.app",
-      },
-    },
-    {
-      "@type": "FAQPage",
-      mainEntity: [
-        {
-          "@type": "Question",
-          name: "How do I know if my car insurance claim was underpaid?",
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: "Compare the insurer's estimate against two or three independent body shop quotes. If the insurer's figure is more than 10% lower, the claim is likely underpaid. Also check for depreciation errors and missing line items like rental car coverage or diminished value.",
-          },
-        },
-        {
-          "@type": "Question",
-          name: "Can I negotiate my car insurance settlement?",
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: "Yes. You have the right to dispute any settlement offer in writing. Provide your own repair estimates, cite specific policy language, and request a formal re-evaluation. Most states require insurers to respond within 30 days.",
-          },
-        },
-        {
-          "@type": "Question",
-          name: "What is diminished value on a car insurance claim?",
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: "Diminished value is the reduction in your car's resale value after an accident, even after full repairs. Most at-fault states allow you to claim this from the other driver's liability insurer. Many people never claim it — leaving hundreds or thousands on the table.",
-          },
-        },
-      ],
-    },
-  ],
 };
 
 export default function Page() {
   return (
-    <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <ClaimLandingPage
-        badge="Auto Insurance"
-        h1="Car insurance claim underpaid? Here's what to do"
-        answer="If your car insurance payout feels low, it probably is. Insurers' first settlement offers are routinely 15–35% below what policies actually cover — through depreciation errors, underpriced repair estimates, and ignored coverage clauses. You have the legal right to dispute, and most policyholders who do recover significantly more."
-        signs={{
-          heading: "Signs your car insurance claim is underpaid",
-          items: [
-            "The repair estimate is lower than two or more independent body shop quotes",
-            "Depreciation was applied without a clear methodology or Actual Cash Value calculation",
-            "Rental car reimbursement was capped below your policy limit",
-            "Diminished value (resale loss after repair) was never offered",
-            "OEM parts were replaced with aftermarket parts without your consent",
-            "The total-loss valuation is below comparable vehicles in your area",
-            "The insurer settled quickly and pressured you to accept within days",
-          ],
-        }}
-        steps={{
-          heading: "How to dispute an underpaid car insurance claim",
-          items: [
-            {
-              n: "01",
-              title: "Get two independent repair estimates",
-              desc: "Visit two or three body shops and collect written estimates. A gap of more than 10% between their numbers and the insurer's figure is strong evidence of underpayment.",
-            },
-            {
-              n: "02",
-              title: "Pull your policy's exact coverage language",
-              desc: "Find the clauses covering collision, comprehensive, rental reimbursement, and diminished value. Highlight every benefit the insurer ignored or underapplied.",
-            },
-            {
-              n: "03",
-              title: "Write a formal dispute letter",
-              desc: "Address the insurer in writing, cite the specific policy clauses and dollar discrepancies, and demand a re-evaluation. Reference your state's insurance code if applicable.",
-            },
-            {
-              n: "04",
-              title: "Escalate if ignored",
-              desc: "If the insurer doesn't respond within 30 days, file a complaint with your state's Department of Insurance. Regulators can compel a response and even mandate payment.",
-            },
-            {
-              n: "05",
-              title: "Use ClaimGap to find the exact gap",
-              desc: "Upload your policy and settlement letter. ClaimGap's AI compares them clause by clause, calculates the dollar discrepancy, and drafts your dispute letter — in 90 seconds.",
-            },
-          ],
-        }}
-        stats={[
-          { value: "20–40%", label: "Typical underpayment range" },
-          { value: "30 days", label: "State deadline to respond" },
-          { value: "90 sec", label: "ClaimGap analysis time" },
-        ]}
-        faqs={[
-          {
-            q: "How do I know if my car insurance claim was underpaid?",
-            a: "Compare the insurer's estimate against two or three independent body shop quotes. If the gap is more than 10%, the claim is likely underpaid. Also check for depreciation errors and missing coverage like rental reimbursement or diminished value.",
-          },
-          {
-            q: "Can I negotiate my car insurance settlement?",
-            a: "Yes. You have the right to dispute any settlement offer in writing. Provide your own repair estimates, cite specific policy language, and request a formal re-evaluation. Most states require insurers to respond within 30 days.",
-          },
-          {
-            q: "What is diminished value and can I claim it?",
-            a: "Diminished value is the reduction in your car's resale value after an accident, even after repairs. Most at-fault states allow you to claim it from the at-fault driver's liability insurer. Many policyholders never claim it, leaving hundreds or thousands uncollected.",
-          },
-          {
-            q: "How long do I have to dispute a car insurance settlement?",
-            a: "Deadlines vary by state, but most statutes of limitations are 2–4 years from the date of loss. However, the sooner you dispute, the stronger your position — evidence is fresh and adjusters are still assigned.",
-          },
-        ]}
-        cta={{
-          heading: "See exactly how much your car insurer owes you",
-          sub: "Upload your policy and settlement letter. ClaimGap's AI finds every underpaid dollar and drafts your dispute letter in 90 seconds.",
-        }}
-      />
-    </>
+    <SEOPageLayout
+      badge="Auto insurance"
+      claimType="Auto"
+      h1="Car insurance claim underpaid? Here's what to do"
+      intro="If your auto insurance settlement feels low, it probably is. Insurers use proprietary valuation tools that frequently understate vehicle value by 15–30%. You have the right to dispute — and the policy language to back you up."
+      sections={[
+        {
+          heading: "Signs your car insurance claim was underpaid",
+          content: (
+            <ul className="mt-3 space-y-2">
+              {[
+                "The settlement offer arrived within 48 hours — before a proper inspection",
+                "Comparable vehicles in the adjuster's list have higher mileage or worse condition than yours",
+                "Aftermarket upgrades or recent repairs weren't factored into the valuation",
+                "The offer is below what similar vehicles are selling for in your area right now",
+                "You were pressured to sign a release quickly",
+                "The adjuster applied 'betterment' deductions for parts you recently replaced",
+              ].map((s) => (
+                <li key={s} className="flex items-start gap-2 text-sm text-ink-muted">
+                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-rust" />
+                  {s}
+                </li>
+              ))}
+            </ul>
+          ),
+        },
+        {
+          heading: "How auto insurers calculate (and minimize) your payout",
+          content: (
+            <div className="space-y-4 text-sm">
+              <p>
+                For total loss claims, insurers use Actual Cash Value (ACV) — but they calculate it using internal databases like CCC ONE or Mitchell that often pull comparable vehicles from distant markets or with higher mileage. The result is a baseline that favors the insurer.
+              </p>
+              <p>
+                For collision and repair claims, adjusters use labor rates below what local body shops actually charge, apply depreciation to parts that may be covered as new under your policy, and frequently miss hidden damage that only appears during teardown.
+              </p>
+              <div className="rounded border-l-4 border-rust bg-rust-faint px-4 py-3">
+                <p className="font-semibold text-ink text-sm">Industry data point</p>
+                <p className="mt-1 text-ink-muted text-sm">
+                  Research by the Consumer Federation of America found total-loss settlements averaging 20–30% below comparable retail values. This gap is a structural practice — not a mistake.
+                </p>
+              </div>
+            </div>
+          ),
+        },
+        {
+          heading: "Your rights when disputing an auto insurance settlement",
+          content: (
+            <div className="space-y-3 text-sm">
+              <p>Every state requires insurers to settle claims in good faith. You generally have the right to:</p>
+              <ul className="space-y-2">
+                {[
+                  "Request the complete valuation report and comparable vehicle list",
+                  "Submit your own comparables or independent appraisal",
+                  "Invoke the appraisal clause in your policy (most policies include one)",
+                  "File a complaint with your state's Department of Insurance",
+                  "Negotiate before signing any release agreement",
+                ].map((r) => (
+                  <li key={r} className="flex items-start gap-2 text-ink-muted">
+                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-navy" />
+                    {r}
+                  </li>
+                ))}
+              </ul>
+              <p className="pt-2">
+                Most disputes are resolved before any formal proceeding. A well-documented counter-offer citing policy language and your own comparable data is usually enough to get a revised offer.
+              </p>
+            </div>
+          ),
+        },
+        {
+          heading: "How to dispute an auto insurance underpayment (step by step)",
+          content: (
+            <ol className="space-y-4 text-sm">
+              {[
+                {
+                  step: "1. Get the insurer's full valuation in writing",
+                  detail: "Ask for the comparable vehicle list and the methodology they used. This is your baseline.",
+                },
+                {
+                  step: "2. Find your own comparables",
+                  detail: "Search AutoTrader, CarGurus, and local dealers for vehicles matching your make, model, year, mileage, and condition. Screenshot the listings.",
+                },
+                {
+                  step: "3. Document every discrepancy in your policy",
+                  detail: "Match the coverage language in your policy against what was actually paid. Note every clause they ignored.",
+                },
+                {
+                  step: "4. Send a formal counter-offer letter",
+                  detail: "Reference your policy clauses, attach comparables, and state the dollar amount you're requesting. Send via certified mail.",
+                },
+                {
+                  step: "5. Escalate if ignored",
+                  detail: "Invoke the appraisal clause, file a state complaint, or consult a public adjuster or attorney.",
+                },
+              ].map(({ step, detail }) => (
+                <li key={step} className="border-l-2 border-navy/20 pl-4">
+                  <p className="font-semibold text-ink">{step}</p>
+                  <p className="mt-1 text-ink-muted">{detail}</p>
+                </li>
+              ))}
+            </ol>
+          ),
+        },
+      ]}
+      ctaHeading="Check if your auto claim is underpaid — free"
+      ctaBody="Upload your policy and settlement letter. Our AI reads both documents and shows you exactly where the numbers don't match — clause by clause. Free preview in 90 seconds."
+    />
   );
 }

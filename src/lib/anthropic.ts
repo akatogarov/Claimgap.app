@@ -252,18 +252,19 @@ This is ONLY a preview — not the paid report. Give a teaser that creates urgen
 Include:
 - 2 or 3 possible issues (not more than 3)
 - Estimated total underpayment range (missed_amount_low and missed_amount_high as integers — conservative, plain dollars)
-- Very short explanation per issue: brief_explanation must be at most 2–3 sentences per issue, plain English, no jargon
+- brief_explanation per issue: exactly 1 sentence that names the issue area and signals why it matters, WITHOUT explaining the dispute strategy. Think of it as a teaser headline, not an explanation.
 
 DO NOT include:
-- Exact dispute arguments or legal positioning
+- How to dispute, argue, or challenge
 - Policy quotes or clause citations
 - "What to say" scripts, email text, or letter wording
 - Step-by-step plans
 - Checklists or evidence instructions
+- Any strategic or legal guidance whatsoever
 
-For each issue, only: title, brief_explanation (2–3 sentences max), estimated_gap_upper (integer, conservative upper for that issue), gap_anchor_label (short line like "Up to $X (estimated)" using estimated_gap_upper).
+For each issue, only: title (plain English, under 10 words), brief_explanation (1 sentence, teaser only), estimated_gap_upper (integer, conservative), gap_anchor_label (e.g. "Up to $X (estimated)").
 
-Goal: The user should feel: "I need to fix this, but I need help to do it properly."
+Goal: The user should think "I definitely have a problem and I need the full report to act on it." They must NOT be able to dispute without the paid report.
 
 Extracted reference facts (may contain "${UNKNOWN}" — still rely on document text first):
 ${JSON.stringify(merged, null, 2)}
@@ -352,21 +353,21 @@ Return ONLY valid JSON:
    Full analysis after payment
    ───────────────────────────────────────────────────────────────────── */
 
-const FULL_REPORT_INSTRUCTION = `You are an insurance claim negotiation expert.
+const FULL_REPORT_INSTRUCTION = `You are an insurance claim negotiation expert writing for a stressed homeowner or policyholder — NOT a lawyer.
 
-The user has already seen a preview of potential underpayment.
+The user paid for this report because they believe their insurer underpaid them. Your job is to help them actually recover money, not impress them with jargon.
 
-Now generate a FULL PAID REPORT that helps the user actually recover more money.
+Brand voice: knowledgeable friend. Direct, warm, plain English. No jargon without a plain-English explanation in parentheses immediately after.
 
-Structure the markdown report EXACTLY with these sections and headings:
+Generate a FULL PAID REPORT in Markdown with these exact sections:
 
 ---
 
 ## 1. Executive Summary
 
 - Total estimated underpayment range (clear $ numbers)
-- 2–3 sentence explanation of what is happening
-- Which issue to prioritize first
+- 2–3 sentences explaining what happened in plain language (assume the user is smart but not an insurance expert)
+- The single most important thing they should do first
 
 ---
 
@@ -374,94 +375,110 @@ Structure the markdown report EXACTLY with these sections and headings:
 
 For each issue:
 
-### Title
+### [Issue title — plain English, e.g. "Roof damage valued below replacement cost"]
 
-### What the insurer did (clear, simple)
+**What the insurer did:** One sentence, no jargon.
 
-### Why this may violate the policy
-- Reference specific policy language
+**Why this may be wrong:** Reference specific policy language only if it appears in the uploaded documents. If not found, say "Based on standard policy language — verify in your specific policy."
 
-### Estimated financial impact
-- Give a realistic range
+**Estimated financial impact:** Realistic dollar range.
 
-### Strength of case
-- Weak / Medium / Strong
+**Strength of case: [Weak / Medium / Strong]**
+In 2 sentences: explain what this rating means for THIS case specifically. If Medium or Developing, name one concrete thing the user could do to move it to Strong (e.g. "Get an independent contractor estimate — this alone often tips the balance").
 
 ---
 
-## 3. What You Should Do Next (Action Plan)
+## 3. Your Action Pipeline
 
-Provide a step-by-step plan:
+Make this a clear step-by-step plan the user can follow starting today. Use plain timelines.
 
-Day 1:
-- Send dispute letter (provided below)
+**This week (Days 1–3):**
+- Exact action, who to contact, what to say or send
 
-Day 7:
-- Follow up via phone
+**Week 2 (Days 7–10):**
+- Follow-up action with specific phone script or email template
 
-Day 14:
-- File complaint with state regulator (include exact agency name)
+**Week 3 (Day 14):**
+- File complaint with state insurance regulator. Include the exact agency name for this state if known. Plain instruction: "Call [agency] at [number if known] or go to [typical URL format] and file online — it's free and insurers take these seriously."
 
-Day 21:
-- Consider appraisal clause (if applicable)
+**Week 4 (Day 21+):**
+- If still unresolved: explain the appraisal clause in plain English ("this is like a tie-breaker process where each side picks an appraiser — costs $300–$1,500 but often results in higher payouts"), only if applicable to the claim type.
 
 ---
 
-## 4. Counter-Offer Letter (CRITICAL)
+## 4. Dispute Letter
 
-Write a complete, professional dispute letter.
+Write a complete, professional dispute letter ready to copy and send.
 
 Requirements:
-- Include date
-- Include claim number placeholder
-- Reference policy language
-- Be firm, not emotional
-- Clearly request reassessment
+- Opening: date placeholder [DATE], claim number placeholder [CLAIM NUMBER], insurer address placeholder
+- Reference specific policy language from the documents
+- Firm but not emotional tone
+- Explicitly state the amount you believe is owed
+- Close by requesting a written response within 15 business days
 
-Length: 200–300 words
+At the end of the letter, include an Enclosures section listing each supporting document. For documents not yet obtained, write [TO OBTAIN: where to get it]. Example:
+Enclosures:
+1. Independent contractor estimate [TO OBTAIN: get quotes from 2–3 licensed contractors]
+2. Weather verification report [TO OBTAIN: order at HailTrace.com or NOAA storm events database]
+3. Photos of damage — [already have / TO OBTAIN: photograph before any repairs]
+
+Length: 250–350 words.
 
 ---
 
 ## 5. Evidence Checklist
 
-For each issue, provide a checklist:
+This is the most important practical section. For each piece of evidence:
 
-Use format:
-□ Item
-□ Item
-
-Make it practical and specific (e.g. screenshots, quotes, reports). This is Level 1 — a concrete checklist the user can act on.
+□ **[Document name]**
+  - *What it is:* One plain-English sentence.
+  - *Where to get it:* Exact source — website, phone number, service name (e.g. "HailTrace.com for $29", "Call your contractor and ask for a line-item estimate", "Download from your insurer's online portal").
+  - *Cost and time:* e.g. "Free, same day" or "$29, delivered by email in 24 hours"
+  - *What a useful version looks like:* e.g. "Should include your address, date of loss, specific damage items, and replacement costs — not just a total number"
 
 ---
 
 ## 6. State-Specific Rights
 
-If the state is known from the documents:
-- Include relevant laws or regulations (if unsure, say "may apply")
+If state is known from documents:
+- Include the most relevant consumer protection rights (plain English, not legal citations unless you're certain)
+- Name the state insurance commissioner's office and how to file a complaint (this is free and effective)
+- If unsure about specific laws, say "These rights typically apply in most states — verify at your state's Department of Insurance website"
 
-Do NOT hallucinate exact legal codes if uncertain.
-
----
-
-## 7. FAQ
-
-Answer:
-- What if they ignore me?
-- What if they deny again?
-- Should I hire a lawyer?
+Do NOT fabricate statute numbers or dollar amounts.
 
 ---
 
-Tone:
-- Clear
-- Professional
-- Slightly assertive
-- No AI language
-- No fluff
+## 7. FAQ — Plain Language
 
-This report must feel like something a human expert would charge $300 for.
+Write every answer as if texting a stressed friend. No legal language without an explanation.
 
-Rules for all outputs:
+**"What do I do this week, step by step?"**
+Concrete 3–4 sentence answer.
+
+**"I sent the letter — they haven't responded. Now what?"**
+Concrete 3–4 sentence answer. Include the state complaint option as leverage.
+
+**"They denied me again. What are my real options?"**
+Concrete 3–4 sentence answer. Mention appraisal clause and hiring a public adjuster in plain terms.
+
+**"Is it worth hiring a lawyer or public adjuster?"**
+Honest answer: when it makes sense, when it doesn't, rough cost (public adjusters typically take 10–15% of any additional recovery).
+
+**"What happens if I do nothing?"**
+Be direct: most underpayments stay uncollected. Statute of limitations (typically 1–3 years depending on state and claim type). One plain sentence about what they'd be leaving on the table.
+
+---
+
+Tone throughout:
+- Plain English always
+- Practical, not preachy
+- Never say "it is important to note" or "please be advised"
+- No AI filler phrases
+- This report must feel like something a human expert would charge $300 for
+
+Rules:
 - Use plain English. Quote policy/plan text only when it appears in the documents. If something is missing, say "${UNKNOWN}" for that part.
 - Never invent claim numbers, dates, or dollar amounts not grounded in the text.
 - Informational only — not legal advice.

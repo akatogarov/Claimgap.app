@@ -1,6 +1,6 @@
 export type InsuranceType = "Auto" | "Home" | "Health";
 
-export type ClaimStatus = "preview" | "paid" | "failed" | "awaiting_clarification";
+export type ClaimStatus = "preview" | "paid" | "failed" | "awaiting_clarification" | "awaiting_verification";
 
 /** Facts taken from documents (or placeholders). */
 export interface ExtractedFacts {

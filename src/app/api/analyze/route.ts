@@ -84,6 +84,8 @@ export async function POST(request: Request) {
     const form = await request.formData();
     const insurance_type = String(form.get("insurance_type") ?? "") as InsuranceType;
     const email = String(form.get("email") ?? "").trim().toLowerCase();
+    // mode=extract_only: extract facts, save to DB, return for user verification before preview
+    const mode = String(form.get("mode") ?? "full");
     const clarificationRaw = form.get("clarification_answers");
     let clarificationAnswers: Record<string, string> | undefined;
     if (typeof clarificationRaw === "string" && clarificationRaw.trim()) {
@@ -170,8 +172,53 @@ export async function POST(request: Request) {
     if (clarificationAnswers && Object.keys(clarificationAnswers).length > 0) {
       extracted = mergeClarificationIntoExtracted(extracted, clarificationAnswers);
     }
-    const questions = buildClarificationQuestions(extracted);
 
+    // ── EXTRACT-ONLY MODE ──────────────────────────────────────────────────
+    // Save extracted facts for user to review/correct before preview runs.
+    if (mode === "extract_only") {
+      const partial: StoredAnalysis = {
+        preview: null,
+        full: null,
+        extracted: {
+          policy_text: policyTextFinal,
+          settlement_text: settlementTextFinal,
+          optional_context: optionalFinal,
+        },
+        extracted_facts: extracted,
+      };
+
+      const supabase = getServiceSupabase();
+      const offer_amount = parseOfferNumber(extracted.amount_offered_or_paid) || null;
+      const { data, error } = await supabase
+        .from("claims")
+        .insert({
+          email,
+          insurance_type,
+          insurer: extracted.insurer_name || "Unable to determine from provided documents",
+          insurer_normalized: normalizeInsurer(extracted.insurer_name || ""),
+          state: extracted.state || "Unable to determine from provided documents",
+          description: `Pending verification. Claim type: ${insurance_type}`,
+          offer_amount,
+          status: "awaiting_verification",
+          analysis: partial as unknown as Record<string, unknown>,
+        })
+        .select("id")
+        .single();
+
+      if (error || !data?.id) {
+        console.error("Supabase claims insert (extract_only):", error);
+        return NextResponse.json({ error: "Could not save your claim. Please try again.", code: "db_insert_failed" }, { status: 500 });
+      }
+
+      return NextResponse.json({
+        id: data.id,
+        needs_verification: true,
+        extracted_facts: extracted,
+      });
+    }
+
+    // ── LEGACY CLARIFICATION FLOW ──────────────────────────────────────────
+    const questions = buildClarificationQuestions(extracted);
     const criticalNeed = needsCriticalClarification(questions);
     const hasAnswers = clarificationAnswers && Object.keys(clarificationAnswers).length > 0;
 

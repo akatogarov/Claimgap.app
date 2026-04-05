@@ -1,136 +1,138 @@
 import type { Metadata } from "next";
-import { ClaimLandingPage } from "@/components/ClaimLandingPage";
+import { SEOPageLayout } from "@/components/SEOPageLayout";
 
 export const metadata: Metadata = {
-  title: "Insurance Offered Too Little? 5 Steps to Get a Fair Settlement",
+  title: "Insurance Company Gave You a Low Offer? Don't Accept It Yet",
   description:
-    "Received a low insurance settlement offer? You don't have to accept it. Learn the 5 steps to negotiate a higher payout and what to do if the insurer refuses.",
+    "A low insurance settlement offer is not final. Learn why insurers start low, what your policy actually entitles you to, and exactly how to counter a lowball offer.",
   alternates: { canonical: "/insurance-claim-low-offer" },
   openGraph: {
     url: "/insurance-claim-low-offer",
-    title: "Insurance Offered Too Little? 5 Steps to Get a Fair Settlement",
+    title: "Insurance Company Gave You a Low Offer? Don't Accept It Yet",
     description:
-      "Most first insurance offers are below what your policy covers. Here's the proven process for negotiating a higher settlement — without a lawyer.",
+      "First offers from insurance companies are designed to close claims cheaply. Here's how to know if you're being lowballed — and how to push back.",
   },
-};
-
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "Article",
-      headline: "Insurance Offered Too Little? 5 Steps to Get a Fair Settlement",
-      description:
-        "How to respond to a low insurance settlement offer and negotiate a higher payout using your policy language.",
-      url: "https://claimgap.app/insurance-claim-low-offer",
-      publisher: {
-        "@type": "Organization",
-        name: "ClaimGap",
-        url: "https://claimgap.app",
-      },
-    },
-    {
-      "@type": "FAQPage",
-      mainEntity: [
-        {
-          "@type": "Question",
-          name: "What happens if I reject an insurance settlement offer?",
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: "Nothing bad automatically happens. Rejecting an offer starts a negotiation. The insurer cannot cancel your policy solely because you dispute a settlement. You remain in your policy and can continue the dispute process through internal appeal, appraisal, or state complaint.",
-          },
-        },
-        {
-          "@type": "Question",
-          name: "Should I accept the first insurance settlement offer?",
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: "In most cases, no. First offers are typically 15–40% below what policies cover. Once you sign a settlement release, you generally cannot reopen the claim. Always compare the offer against your policy's coverage language before signing.",
-          },
-        },
-      ],
-    },
-  ],
 };
 
 export default function Page() {
   return (
-    <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <ClaimLandingPage
-        badge="Low Settlement Offer"
-        h1="Insurance offered too little? Here's how to negotiate a fair settlement"
-        answer="Receiving a low insurance settlement offer doesn't mean you're stuck with it. Insurers build lowball offers into their process — expecting most policyholders to accept without checking. Your policy is a legal contract, and the insurer is obligated to pay exactly what it promises. If the offer doesn't match the coverage, you have every right to dispute in writing."
-        signs={{
-          heading: "Signs the settlement offer is too low",
-          items: [
-            "The offer arrived within days of filing — faster than a thorough investigation takes",
-            "The adjuster couldn't explain how specific dollar amounts were calculated",
-            "Your own repair or replacement estimates are significantly higher",
-            "Certain damage categories or coverage line items are missing entirely",
-            "The letter includes language pressuring you to 'accept quickly' or citing a deadline",
-            "The offer is below the insurer's own previous settlement for similar claims",
-            "You were told this is 'the maximum under your policy' without written documentation",
-          ],
-        }}
-        steps={{
-          heading: "5 steps to negotiate a higher insurance settlement",
-          items: [
-            {
-              n: "01",
-              title: "Don't sign anything yet",
-              desc: "A signed release typically closes your claim permanently. Take time to review the offer against your policy before accepting or rejecting anything in writing.",
-            },
-            {
-              n: "02",
-              title: "Request a written breakdown of the calculation",
-              desc: "Ask the adjuster to provide a line-by-line written explanation of how the settlement amount was calculated. Any missing line items or unexplained deductions are your leverage.",
-            },
-            {
-              n: "03",
-              title: "Compare your policy language word for word",
-              desc: "Find every coverage clause relevant to your claim type. The insurer must honor the exact terms of your policy — if the language says 'replacement cost,' they cannot pay 'actual cash value.'",
-            },
-            {
-              n: "04",
-              title: "Submit a counter-offer in writing",
-              desc: "Write a formal counter-offer letter citing specific policy clauses, your own estimates, and the exact dollar difference. Keep all communication in writing — phone calls are not binding.",
-            },
-            {
-              n: "05",
-              title: "Escalate to your state's Department of Insurance",
-              desc: "If the insurer refuses to negotiate in good faith, file a complaint with your state regulator. Insurers take regulatory complaints seriously — it often resolves disputes within weeks.",
-            },
-          ],
-        }}
-        stats={[
-          { value: "15–40%", label: "Typical first-offer gap" },
-          { value: "30 days", label: "Average dispute resolution" },
-          { value: "90 sec", label: "ClaimGap analysis time" },
-        ]}
-        faqs={[
-          {
-            q: "What happens if I reject an insurance settlement offer?",
-            a: "Nothing bad automatically happens. Rejecting an offer starts a negotiation. The insurer cannot cancel your policy solely because you dispute a settlement. You remain in your policy and can continue the dispute process through internal appeal, appraisal, or state complaint.",
-          },
-          {
-            q: "Should I accept the first insurance settlement offer?",
-            a: "In most cases, no. First offers are typically 15–40% below what policies cover. Once you sign a settlement release, you generally cannot reopen the claim. Always compare the offer against your policy's coverage language before signing.",
-          },
-          {
-            q: "How long does insurance settlement negotiation take?",
-            a: "Most states require insurers to respond to a written dispute within 10–30 business days. If you invoke the appraisal clause, independent review typically takes 4–8 weeks. Filing a state complaint can accelerate the process significantly.",
-          },
-          {
-            q: "Do I need a lawyer to dispute a low insurance offer?",
-            a: "Not for most disputes. A well-written counter-offer letter citing your policy language and supported by independent estimates resolves the majority of underpayment disputes. Lawyers become necessary for very large claims, bad faith allegations, or litigation.",
-          },
-        ]}
-        cta={{
-          heading: "Find out exactly how much more you're owed",
-          sub: "Upload your policy and settlement letter. ClaimGap's AI finds the gap and writes your counter-offer letter — ready to send in 90 seconds.",
-        }}
-      />
-    </>
+    <SEOPageLayout
+      badge="Know your rights"
+      claimType="Home"
+      h1="Insurance company gave you a low offer? Don't accept it yet"
+      intro={`The first settlement offer from an insurance company is almost never their best one. Adjusters are trained to close claims quickly and cheaply. "Quick and low" benefits the insurer — not you. Here's what you need to know before signing anything.`}
+      sections={[
+        {
+          heading: "Why insurance companies start with a low offer",
+          content: (
+            <div className="space-y-4 text-sm">
+              <p>
+                Insurance adjusters work for the insurance company — not for you. Their job is to settle claims as efficiently as possible, which means minimizing payouts. The tactics are systematic:
+              </p>
+              <ul className="space-y-2">
+                {[
+                  "First offers are calculated to be acceptable to most policyholders without a fight",
+                  "Adjusters know most people don't re-read their policy after buying it",
+                  "Settlement pressure is applied early, while you're still dealing with the underlying loss",
+                  "Signing a release ends the claim — even if you later discover the payment was short",
+                  "Internal scoring systems reward adjusters for closing claims below reserve amounts",
+                ].map((item) => (
+                  <li key={item} className="flex items-start gap-2 text-ink-muted">
+                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-rust" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ),
+        },
+        {
+          heading: "How to know if the offer is actually too low",
+          content: (
+            <div className="space-y-4 text-sm">
+              <p>
+                The only reliable way to know if an offer is fair is to compare it against your policy language — not against what you hoped to receive. Specifically:
+              </p>
+              <ul className="space-y-2">
+                {[
+                  "Does the offer reflect replacement cost, or did they apply depreciation when your policy promises replacement cost value?",
+                  "Are there coverage clauses (code upgrade, matching, loss of use) that weren't applied?",
+                  "Does the dollar amount match independent contractor or dealer estimates for the same damage?",
+                  "Were any damage categories simply omitted from the estimate?",
+                  "Is the calculation methodology documented and verifiable?",
+                ].map((q) => (
+                  <li key={q} className="flex items-start gap-2 text-ink-muted">
+                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-navy" />
+                    {q}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ),
+        },
+        {
+          heading: "What to do when you receive a low settlement offer",
+          content: (
+            <ol className="space-y-4 text-sm">
+              {[
+                {
+                  step: "1. Do not sign anything yet",
+                  detail: "A signed release is generally final. You usually cannot reopen a claim after signing. Take time to evaluate the offer properly.",
+                },
+                {
+                  step: "2. Request the full claim file",
+                  detail: "Ask for the adjuster's worksheet, the damage estimate, and the methodology used. You have the right to see what you're settling.",
+                },
+                {
+                  step: "3. Get an independent estimate",
+                  detail: "For home or auto claims, get a contractor or dealer estimate independently. For health claims, verify the billing codes used and the 'allowed amount' against your plan's published fee schedule.",
+                },
+                {
+                  step: "4. Identify your policy's actual coverage language",
+                  detail: "Read the relevant coverage sections carefully. Look for replacement cost provisions, additional coverage clauses, and any riders or endorsements you may have forgotten about.",
+                },
+                {
+                  step: "5. Make a written counter-offer",
+                  detail: "Cite the specific policy language, attach supporting documentation, and state clearly what amount you're requesting and why. Do not just say 'it's too low' — make a specific, documented counter.",
+                },
+              ].map(({ step, detail }) => (
+                <li key={step} className="border-l-2 border-navy/20 pl-4">
+                  <p className="font-semibold text-ink">{step}</p>
+                  <p className="mt-1 text-ink-muted">{detail}</p>
+                </li>
+              ))}
+            </ol>
+          ),
+        },
+        {
+          heading: "What happens after you counter",
+          content: (
+            <div className="space-y-3 text-sm">
+              <p>
+                In most cases, a documented counter-offer prompts the insurer to revise upward. Adjusters have authority to increase offers &mdash; they just won&apos;t do it unless pushed with evidence.
+              </p>
+              <p>
+                If the insurer refuses to negotiate, your escalation options include:
+              </p>
+              <ul className="space-y-2">
+                {[
+                  "Invoking the appraisal or arbitration clause in your policy",
+                  "Filing a complaint with your state Department of Insurance",
+                  "Hiring a public adjuster (typically on contingency)",
+                  "Consulting a bad faith insurance attorney (often no upfront cost)",
+                ].map((o) => (
+                  <li key={o} className="flex items-start gap-2 text-ink-muted">
+                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-navy" />
+                    {o}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ),
+        },
+      ]}
+      ctaHeading="Find out if the offer you received is actually fair"
+      ctaBody="Upload your insurance policy and settlement letter. Our AI reads both — clause by clause — and shows you every place the offer falls short of what your policy actually requires. Free in 90 seconds."
+    />
   );
 }

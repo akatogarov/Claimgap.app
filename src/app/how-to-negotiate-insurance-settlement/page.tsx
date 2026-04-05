@@ -1,160 +1,160 @@
 import type { Metadata } from "next";
-import { ClaimLandingPage } from "@/components/ClaimLandingPage";
+import { SEOPageLayout } from "@/components/SEOPageLayout";
 
 export const metadata: Metadata = {
   title: "How to Negotiate an Insurance Settlement (Step-by-Step Guide)",
   description:
-    "A step-by-step guide to negotiating a higher insurance settlement. Learn how to use your policy language, independent estimates, and formal dispute letters to maximize your payout.",
+    "A practical guide to negotiating a higher insurance settlement. Learn what evidence to gather, how to write a counter-offer letter, and when to escalate — for home, auto, and health claims.",
   alternates: { canonical: "/how-to-negotiate-insurance-settlement" },
   openGraph: {
     url: "/how-to-negotiate-insurance-settlement",
     title: "How to Negotiate an Insurance Settlement (Step-by-Step Guide)",
     description:
-      "Most policyholders accept the first offer. The ones who negotiate receive 20–40% more. Here's exactly how to do it.",
+      "Most insurance settlements can be negotiated. Here's exactly how — from building your case to writing the dispute letter and escalating if the insurer ignores you.",
   },
-};
-
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "HowTo",
-      name: "How to Negotiate an Insurance Settlement",
-      description:
-        "A step-by-step process for disputing and negotiating a higher insurance settlement using policy language and independent evidence.",
-      url: "https://claimgap.app/how-to-negotiate-insurance-settlement",
-      step: [
-        {
-          "@type": "HowToStep",
-          position: 1,
-          name: "Review your policy coverage language",
-          text: "Read every coverage clause relevant to your claim type. Highlight language about replacement cost, coverage limits, exclusions, and dispute rights.",
-        },
-        {
-          "@type": "HowToStep",
-          position: 2,
-          name: "Get independent estimates",
-          text: "Collect two or three written estimates from independent contractors, body shops, or appraisers. These establish the true market value of your loss.",
-        },
-        {
-          "@type": "HowToStep",
-          position: 3,
-          name: "Calculate the exact dollar gap",
-          text: "Compare the insurer's offer against your independent estimates and policy entitlements line by line. Document every discrepancy with a specific dollar amount.",
-        },
-        {
-          "@type": "HowToStep",
-          position: 4,
-          name: "Submit a written counter-offer",
-          text: "Write a formal dispute letter citing specific policy clauses, your independent estimates, and the total underpayment amount. Request a written response.",
-        },
-        {
-          "@type": "HowToStep",
-          position: 5,
-          name: "Escalate if necessary",
-          text: "If the insurer doesn't respond fairly, invoke the policy's appraisal clause or file a complaint with your state's Department of Insurance.",
-        },
-      ],
-      publisher: {
-        "@type": "Organization",
-        name: "ClaimGap",
-        url: "https://claimgap.app",
-      },
-    },
-    {
-      "@type": "FAQPage",
-      mainEntity: [
-        {
-          "@type": "Question",
-          name: "Can you negotiate with insurance companies?",
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: "Yes. Insurance settlement offers are not final. You can negotiate by submitting a written counter-offer with supporting documentation. Policyholders who negotiate formally recover an average of 20–40% more than those who accept the first offer.",
-          },
-        },
-      ],
-    },
-  ],
 };
 
 export default function Page() {
   return (
-    <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <ClaimLandingPage
-        badge="Settlement Negotiation"
-        h1="How to negotiate an insurance settlement — step by step"
-        answer="Insurance settlement offers are negotiable. Policyholders who submit a written counter-offer with supporting documentation recover an average of 20–40% more than those who accept the first offer. The key is knowing what your policy actually promises — and presenting the discrepancy clearly in writing. You don't need a lawyer for most disputes."
-        signs={{
-          heading: "Situations where negotiating almost always pays off",
-          items: [
-            "The insurer's repair or replacement estimate is lower than independent quotes",
-            "Depreciation was applied but your policy guarantees replacement cost",
-            "The offer excludes coverage you can find explicitly in your policy",
-            "The insurer settled quickly — within days of filing — without a full inspection",
-            "The adjuster's explanation of deductions is vague or impossible to verify",
-            "Your state has a 'bad faith' insurance statute (most do) that protects you from lowball tactics",
-            "Similar past claims in your area settled for significantly higher amounts",
-          ],
-        }}
-        steps={{
-          heading: "How to negotiate an insurance settlement",
-          items: [
-            {
-              n: "01",
-              title: "Know your policy before you talk numbers",
-              desc: "Read every coverage section relevant to your claim. The insurer's obligation is defined by the policy text — not by the adjuster's verbal explanation. Highlight any clause that the settlement appears to ignore.",
-            },
-            {
-              n: "02",
-              title: "Build your evidence base",
-              desc: "Collect independent repair estimates, replacement quotes, medical bills, loss documentation, and photos. Two or three independent sources are more persuasive than one.",
-            },
-            {
-              n: "03",
-              title: "Calculate the gap precisely",
-              desc: "Compare the insurer's offer against your total documented loss, line by line. A specific dollar figure (e.g., '$4,200 below policy entitlement') is far more effective than a general complaint.",
-            },
-            {
-              n: "04",
-              title: "Write a formal counter-offer letter",
-              desc: "Address the insurer in writing. State the specific coverage clauses, cite your evidence, and request the exact amount you're owed. Written disputes create a paper trail that protects you.",
-            },
-            {
-              n: "05",
-              title: "Invoke appraisal or file a complaint if stuck",
-              desc: "Most policies include an appraisal clause as an alternative to litigation. If that fails, a complaint to your state's Department of Insurance typically produces a response within 30 days.",
-            },
-          ],
-        }}
-        stats={[
-          { value: "20–40%", label: "Average negotiated increase" },
-          { value: "80%+", label: "Disputes resolved without lawyers" },
-          { value: "90 sec", label: "ClaimGap analysis time" },
-        ]}
-        faqs={[
-          {
-            q: "Can you negotiate with insurance companies?",
-            a: "Yes. Settlement offers are not final. You can submit a written counter-offer with supporting documentation at any time before signing a release. Policyholders who negotiate formally recover 20–40% more on average.",
-          },
-          {
-            q: "What evidence is most effective in an insurance settlement negotiation?",
-            a: "Independent professional estimates carry the most weight, followed by specific policy language citations and a clear dollar-by-dollar breakdown of the discrepancy. Vague complaints are easy to dismiss; specific evidence with dollar amounts is not.",
-          },
-          {
-            q: "How many times can you negotiate an insurance settlement?",
-            a: "There's no legal limit on rounds of negotiation before you sign a release. You can counter-offer multiple times. Once you sign a final release, however, the claim is closed — so don't sign until you're satisfied.",
-          },
-          {
-            q: "Is it worth hiring a public adjuster to negotiate?",
-            a: "For large or complex claims (over $20,000), a public adjuster's expertise can be worth their 10–15% fee. For smaller disputes, a well-documented written counter-offer is usually sufficient and costs nothing.",
-          },
-        ]}
-        cta={{
-          heading: "Get your counter-offer letter written in 90 seconds",
-          sub: "Upload your policy and settlement letter. ClaimGap finds the exact clause-by-clause gap and drafts your counter-offer letter — ready to send today.",
-        }}
-      />
-    </>
+    <SEOPageLayout
+      badge="Dispute guide"
+      claimType="Home"
+      h1="How to negotiate an insurance settlement — a step-by-step guide"
+      intro="Insurance settlements are negotiable. The first offer is rarely final — it's an opening position. Policyholders who push back with documented evidence regularly receive 20–50% more than the initial offer. Here's exactly how to do it."
+      sections={[
+        {
+          heading: "Before you negotiate: what you need",
+          content: (
+            <ul className="mt-3 space-y-2">
+              {[
+                "Your complete insurance policy (declarations page + full policy document)",
+                "The insurer's settlement or denial letter (in writing — request it if they only called)",
+                "An independent repair estimate or valuation (contractor, dealer, or medical billing review)",
+                "Photos and documentation of all damage",
+                "A record of all communications with the adjuster (dates, names, what was said)",
+                "Any receipts or records relevant to the loss",
+              ].map((item) => (
+                <li key={item} className="flex items-start gap-2 text-sm text-ink-muted">
+                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-navy" />
+                  {item}
+                </li>
+              ))}
+            </ul>
+          ),
+        },
+        {
+          heading: "Step 1: Understand what your policy actually covers",
+          content: (
+            <div className="space-y-3 text-sm">
+              <p>
+                Most policyholders negotiate from a general sense that the offer is too low. The most effective approach is policy-specific: find the exact language that supports a higher payment.
+              </p>
+              <p>
+                Common coverage provisions that get missed:
+              </p>
+              <ul className="space-y-1">
+                {[
+                  "Replacement cost vs. actual cash value — major difference in payout",
+                  "Ordinance or Law (code upgrade) coverage — required when renovations trigger code compliance",
+                  "Loss of use / additional living expenses — if you couldn't use your property",
+                  "Extended replacement cost riders — pay above your coverage limit for unexpected cost increases",
+                  "Matching provisions — insurer must match undamaged sections to replaced ones",
+                ].map((c) => (
+                  <li key={c} className="flex items-start gap-2 text-ink-muted">
+                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-rust" />
+                    {c}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ),
+        },
+        {
+          heading: "Step 2: Calculate what you're actually owed",
+          content: (
+            <div className="space-y-3 text-sm">
+              <p>
+                Don&apos;t negotiate a vague &ldquo;more&rdquo; &mdash; negotiate a specific dollar amount you can defend. Build a line-by-line comparison:
+              </p>
+              <div className="rounded border border-navy/10 bg-paper p-4 font-mono text-xs">
+                <div className="grid grid-cols-3 gap-2 font-bold text-ink border-b border-navy/10 pb-2 mb-2">
+                  <span>Item</span>
+                  <span>Insurer paid</span>
+                  <span>You claim</span>
+                </div>
+                {[
+                  ["Roof replacement", "$8,400", "$12,200"],
+                  ["Code upgrade (electrical)", "$0", "$2,100"],
+                  ["Water damage (secondary)", "$0", "$1,800"],
+                  ["Matching siding", "$0", "$3,400"],
+                ].map(([item, paid, claim]) => (
+                  <div key={item} className="grid grid-cols-3 gap-2 text-ink-muted py-1 border-b border-navy/5">
+                    <span>{item}</span>
+                    <span>{paid}</span>
+                    <span className="text-teal-700 font-semibold">{claim}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ),
+        },
+        {
+          heading: "Step 3: Write the counter-offer letter",
+          content: (
+            <div className="space-y-3 text-sm">
+              <p>An effective counter-offer letter does four things:</p>
+              <ol className="space-y-2">
+                {[
+                  "States the specific dollar amount you are requesting",
+                  "Cites the exact policy clauses that support each item",
+                  "Attaches independent documentation (contractor estimates, comparables, medical records)",
+                  "Sets a response deadline (10–15 business days is standard)",
+                ].map((item, i) => (
+                  <li key={item} className="flex items-start gap-2 text-ink-muted">
+                    <span className="shrink-0 font-semibold text-navy">{i + 1}.</span>
+                    {item}
+                  </li>
+                ))}
+              </ol>
+              <p>
+                Send via certified mail (creates legal proof of delivery). Keep a copy of everything you send.
+              </p>
+            </div>
+          ),
+        },
+        {
+          heading: "Step 4: What to do if the insurer doesn't respond or refuses",
+          content: (
+            <ol className="space-y-3 text-sm">
+              {[
+                {
+                  step: "Invoke the appraisal clause",
+                  detail: "Most policies allow you to demand an independent appraisal. Both sides hire appraisers; an umpire decides if they disagree. Insurers often settle before this process concludes.",
+                },
+                {
+                  step: "File a state insurance complaint",
+                  detail: "A complaint to your state Department of Insurance costs nothing and often prompts quick resolution. Insurers don't want a regulatory record of disputes.",
+                },
+                {
+                  step: "Hire a public adjuster",
+                  detail: "Public adjusters work on your behalf (typically 10–15% contingency) and know the policy language and insurer tactics in detail.",
+                },
+                {
+                  step: "Consult a bad faith insurance attorney",
+                  detail: "If the insurer acted in bad faith — unreasonable delay, lowball without basis, ignoring policy language — you may be entitled to damages beyond the original claim amount.",
+                },
+              ].map(({ step, detail }) => (
+                <li key={step} className="border-l-2 border-navy/20 pl-4">
+                  <p className="font-semibold text-ink">{step}</p>
+                  <p className="mt-1 text-ink-muted">{detail}</p>
+                </li>
+              ))}
+            </ol>
+          ),
+        },
+      ]}
+      ctaHeading="Start your negotiation with a full gap analysis"
+      ctaBody="Upload your policy and settlement letter. Our AI identifies every clause the insurer may have missed or misapplied, calculates the dollar gap, and generates a ready-to-send dispute letter with your specific policy citations."
+    />
   );
 }

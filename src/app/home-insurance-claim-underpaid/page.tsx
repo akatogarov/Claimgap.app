@@ -1,136 +1,131 @@
 import type { Metadata } from "next";
-import { ClaimLandingPage } from "@/components/ClaimLandingPage";
+import { SEOPageLayout } from "@/components/SEOPageLayout";
 
 export const metadata: Metadata = {
-  title: "Home Insurance Claim Underpaid? How to Dispute and Recover More",
+  title: "Home Insurance Claim Underpaid? How to Get What Your Policy Promises",
   description:
-    "Is your homeowners insurance settlement too low? Learn the signs of an underpaid property damage claim and the exact steps to dispute and recover what your policy owes you.",
+    "Homeowners insurance settlements are routinely 20–35% below actual repair costs. Learn the signs of an underpaid home claim and how to dispute it with your policy language.",
   alternates: { canonical: "/home-insurance-claim-underpaid" },
   openGraph: {
     url: "/home-insurance-claim-underpaid",
-    title: "Home Insurance Claim Underpaid? How to Dispute and Recover More",
+    title: "Home Insurance Claim Underpaid? How to Get What Your Policy Promises",
     description:
-      "Property insurers routinely pay ACV instead of RCV, exclude code upgrades, and underestimate contractor costs. See how to fight back.",
+      "Adjusters undervalue home repairs by applying excessive depreciation and ignoring code-upgrade requirements. Here's how to check and dispute your settlement.",
   },
-};
-
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "Article",
-      headline: "Home Insurance Claim Underpaid? How to Dispute and Recover More",
-      description:
-        "A complete guide to identifying underpaid homeowners insurance claims and disputing them effectively.",
-      url: "https://claimgap.app/home-insurance-claim-underpaid",
-      publisher: {
-        "@type": "Organization",
-        name: "ClaimGap",
-        url: "https://claimgap.app",
-      },
-    },
-    {
-      "@type": "FAQPage",
-      mainEntity: [
-        {
-          "@type": "Question",
-          name: "What is the difference between ACV and RCV in a home insurance claim?",
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: "Actual Cash Value (ACV) is the depreciated value of damaged property. Replacement Cost Value (RCV) is the full cost to repair or replace at today's prices. Many policies promise RCV but insurers initially pay ACV, withholding the recoverable depreciation until repairs are complete.",
-          },
-        },
-        {
-          "@type": "Question",
-          name: "Can I dispute a homeowners insurance settlement?",
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: "Yes. Submit a written dispute citing the specific policy language and your own contractor estimates. Most policies include an appraisal clause allowing you to hire an independent appraiser if you and the insurer disagree on the amount.",
-          },
-        },
-      ],
-    },
-  ],
 };
 
 export default function Page() {
   return (
-    <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <ClaimLandingPage
-        badge="Homeowners Insurance"
-        h1="Home insurance claim underpaid? How to get what your policy owes"
-        answer="Property insurers regularly pay less than policies require — by defaulting to Actual Cash Value instead of Replacement Cost, excluding code-upgrade expenses, and underpricing contractor labor. If your settlement feels low compared to contractor quotes, it almost certainly is. Homeowners who dispute formally recover an average of 20–40% more."
-        signs={{
-          heading: "Signs your homeowners insurance claim is underpaid",
-          items: [
-            "Settlement is based on Actual Cash Value (ACV) when your policy guarantees Replacement Cost Value (RCV)",
-            "The insurer's repair estimate is below quotes from two or more local contractors",
-            "Building code upgrade costs were excluded even though local code requires them",
-            "Temporary housing and living expenses were denied or capped below policy limits",
-            "Damage categories — like mold remediation or debris removal — are missing from the estimate",
-            "The adjuster used out-of-state labor rates instead of local market rates",
-            "You were pressured to sign a quick-settlement agreement before repairs were complete",
-          ],
-        }}
-        steps={{
-          heading: "How to dispute an underpaid home insurance claim",
-          items: [
-            {
-              n: "01",
-              title: "Get a detailed contractor estimate",
-              desc: "Hire a licensed local contractor to provide a line-by-line written estimate. This is your primary evidence of what repairs actually cost in your area.",
-            },
-            {
-              n: "02",
-              title: "Check ACV vs. RCV in your policy",
-              desc: "Find your policy's Loss Settlement provision. If it says 'Replacement Cost,' the insurer must pay the full repair cost — not the depreciated value. Many adjusters default to ACV hoping you won't notice.",
-            },
-            {
-              n: "03",
-              title: "Document all damage in writing and photos",
-              desc: "Create a complete inventory: photos, videos, written descriptions, serial numbers. Include damage the adjuster may have missed during the initial inspection.",
-            },
-            {
-              n: "04",
-              title: "Submit a written dispute with policy citations",
-              desc: "Write a formal letter citing the specific policy clauses and the dollar discrepancy between their offer and your contractor's estimate. Keep all communication in writing.",
-            },
-            {
-              n: "05",
-              title: "Invoke the appraisal clause if needed",
-              desc: "Most homeowners policies include an appraisal clause. Both parties hire independent appraisers, who choose an umpire to resolve disputes. This bypasses litigation and often resolves in weeks.",
-            },
-          ],
-        }}
-        stats={[
-          { value: "20–40%", label: "Average underpayment gap" },
-          { value: "2 yrs", label: "Typical dispute deadline" },
-          { value: "90 sec", label: "ClaimGap analysis time" },
-        ]}
-        faqs={[
-          {
-            q: "What is the difference between ACV and RCV in a home insurance claim?",
-            a: "Actual Cash Value (ACV) is the depreciated value of damaged property. Replacement Cost Value (RCV) is the full cost to repair or replace at today's prices. Many policies promise RCV but insurers initially pay ACV, withholding recoverable depreciation until repairs are complete.",
-          },
-          {
-            q: "Can I dispute a homeowners insurance settlement?",
-            a: "Yes. Submit a written dispute citing the specific policy language and your own contractor estimates. Most policies include an appraisal clause allowing you to hire an independent appraiser if you and the insurer disagree on the amount.",
-          },
-          {
-            q: "Do I need a public adjuster to dispute my home insurance claim?",
-            a: "Not necessarily. Many policyholders successfully dispute on their own with contractor estimates and a formal dispute letter. A public adjuster can help on large or complex claims — they typically charge 10–15% of the additional settlement. For smaller disputes, a strong written dispute letter is often sufficient.",
-          },
-          {
-            q: "How long does a home insurance dispute take?",
-            a: "Most states require insurers to acknowledge disputes within 10–15 business days and resolve within 30–45 days. If you invoke the appraisal clause, the process typically takes 4–8 weeks. Filing a state complaint can accelerate slow responses.",
-          },
-        ]}
-        cta={{
-          heading: "Find out exactly what your home insurance owes you",
-          sub: "Upload your policy and settlement letter. ClaimGap compares them clause by clause, finds every underpaid dollar, and generates your dispute letter.",
-        }}
-      />
-    </>
+    <SEOPageLayout
+      badge="Homeowners insurance"
+      claimType="Home"
+      h1="Home insurance claim underpaid? How to get what your policy actually promises"
+      intro="After a fire, storm, or water damage, the insurer's first offer is rarely their best. Adjusters routinely understate repair costs, over-apply depreciation, and skip coverage clauses for code upgrades. Most policyholders don't know they can push back — or how."
+      sections={[
+        {
+          heading: "Common reasons home insurance claims are underpaid",
+          content: (
+            <ul className="mt-3 space-y-2">
+              {[
+                "Adjuster used national average repair costs instead of local contractor rates",
+                "Excessive depreciation applied to roofing, flooring, or HVAC that should be replaced, not depreciated",
+                "Code upgrade coverage (Ordinance or Law) ignored when repairs require bringing work up to current building code",
+                "Matching coverage ignored — only damaged items replaced, leaving mismatched finishes",
+                "Hidden or secondary damage (mold, structural) not included in initial estimate",
+                "Contents claim undervalued using replacement cost minus depreciation without ACV documentation",
+              ].map((s) => (
+                <li key={s} className="flex items-start gap-2 text-sm text-ink-muted">
+                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-rust" />
+                  {s}
+                </li>
+              ))}
+            </ul>
+          ),
+        },
+        {
+          heading: "The difference between ACV and replacement cost — and why it matters",
+          content: (
+            <div className="space-y-4 text-sm">
+              <p>
+                Your policy either pays Actual Cash Value (ACV) or Replacement Cost Value (RCV). The difference is significant:
+              </p>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div className="rounded border border-navy/10 bg-paper p-4">
+                  <p className="font-semibold text-ink">Actual Cash Value (ACV)</p>
+                  <p className="mt-1 text-ink-muted">Replacement cost minus depreciation. A 10-year-old roof gets a fraction of what a new roof costs today.</p>
+                </div>
+                <div className="rounded border border-teal-700/20 bg-teal-50/60 p-4">
+                  <p className="font-semibold text-ink">Replacement Cost Value (RCV)</p>
+                  <p className="mt-1 text-ink-muted">Full cost to repair or replace with like materials at current prices. No depreciation deducted.</p>
+                </div>
+              </div>
+              <p>
+                Many insurers initially pay ACV and hold back the depreciation &ldquo;recoverable&rdquo; until repairs are complete. If you didn&apos;t complete repairs or didn&apos;t request the holdback, you may have left money on the table.
+              </p>
+            </div>
+          ),
+        },
+        {
+          heading: "How to dispute a home insurance underpayment",
+          content: (
+            <ol className="space-y-4 text-sm">
+              {[
+                {
+                  step: "1. Get a contractor estimate independently",
+                  detail: "Hire a local contractor to estimate the full repair scope. This gives you a credible counter to the adjuster's number.",
+                },
+                {
+                  step: "2. Read your policy's coverage language carefully",
+                  detail: "Look for: replacement cost vs. ACV, code upgrade coverage (Ordinance or Law), matching provisions, and extended replacement cost riders.",
+                },
+                {
+                  step: "3. Document all damage with photos and receipts",
+                  detail: "Create a line-by-line inventory of damaged property with purchase dates, prices, and current replacement costs.",
+                },
+                {
+                  step: "4. Send a written dispute referencing your policy",
+                  detail: "Cite the specific clauses that support your position. Attach the contractor estimate. Request a written response within 10 business days.",
+                },
+                {
+                  step: "5. Request a re-inspection or invoke appraisal",
+                  detail: "Most policies include an appraisal clause allowing both sides to hire independent appraisers. This often resolves disputes without legal action.",
+                },
+              ].map(({ step, detail }) => (
+                <li key={step} className="border-l-2 border-navy/20 pl-4">
+                  <p className="font-semibold text-ink">{step}</p>
+                  <p className="mt-1 text-ink-muted">{detail}</p>
+                </li>
+              ))}
+            </ol>
+          ),
+        },
+        {
+          heading: "Dispute deadlines you need to know",
+          content: (
+            <div className="space-y-3 text-sm">
+              <p>
+                Home insurance dispute windows are real — and missing them can eliminate your options:
+              </p>
+              <ul className="space-y-2">
+                {[
+                  "Most policies require you to submit a Proof of Loss within 60 days of the loss",
+                  "Appraisal demands typically must be made before the statute of limitations expires (usually 1–3 years by state)",
+                  "Some policies have a 12-month suit limitation clause — even shorter than state law",
+                  "Recoverable depreciation holdback claims often have a 180-day window after repairs",
+                ].map((d) => (
+                  <li key={d} className="flex items-start gap-2 text-ink-muted">
+                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-navy" />
+                    {d}
+                  </li>
+                ))}
+              </ul>
+              <p className="text-ink-muted pt-1 font-medium">Every week you wait narrows your options.</p>
+            </div>
+          ),
+        },
+      ]}
+      ctaHeading="Check if your home insurance claim was underpaid"
+      ctaBody="Upload your homeowners policy and the insurer's settlement letter. Our AI compares them clause by clause and shows you the gap — what the policy says versus what they paid. Free preview in 90 seconds."
+    />
   );
 }

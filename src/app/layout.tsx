@@ -52,21 +52,12 @@ export const metadata: Metadata = {
     title: "ClaimGap — Is Your Insurance Claim Underpaid?",
     description:
       "Most insurers' first offers are too low. ClaimGap compares your policy against their offer, shows the gap in dollars, and generates a ready-to-send dispute letter — in 90 seconds.",
-    images: [
-      {
-        url: "/og-image.png",
-        width: 1200,
-        height: 630,
-        alt: "ClaimGap — Insurance Claim Gap Analysis Tool",
-      },
-    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "ClaimGap — Is Your Insurance Claim Underpaid?",
     description:
       "Upload your policy and settlement letter. Get a clause-by-clause gap analysis, dollar breakdown, and dispute letter in 90 seconds.",
-    images: ["/og-image.png"],
   },
   robots: {
     index: true,

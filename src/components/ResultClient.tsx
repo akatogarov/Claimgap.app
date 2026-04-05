@@ -138,21 +138,39 @@ function ScoreMeter({ score }: { score: number }) {
 
 /* ─── Processing screen ────────────────────────────────────────── */
 
-const PROCESSING_STEPS = [
-  "Payment confirmed",
-  "Reviewing your policy...",
-  "Checking coverage limits...",
-  "Comparing insurer offer...",
-  "Calculating your gap...",
-  "Generating your report...",
-] as const;
+const PROCESSING_STEPS: { label: string; detail: string; durationMs: number }[] = [
+  { label: "Payment confirmed", detail: "Securely verified by Stripe", durationMs: 2000 },
+  { label: "Reading your documents", detail: "Policy, letters, and all uploads", durationMs: 6000 },
+  { label: "Analyzing coverage limits", detail: "Checking what your policy actually covers", durationMs: 8000 },
+  { label: "Comparing insurer's payment", detail: "Finding gaps between what you got and what you're owed", durationMs: 8000 },
+  { label: "Writing your dispute letter", detail: "Personalized with your claim details", durationMs: 10000 },
+  { label: "Building evidence checklist", detail: "Specific to your case and state", durationMs: 8000 },
+  { label: "Finalizing your report", detail: "Almost ready…", durationMs: 0 },
+];
+
+const TOTAL_ESTIMATE_SECS = Math.round(
+  PROCESSING_STEPS.slice(0, -1).reduce((s, p) => s + p.durationMs, 0) / 1000
+);
 
 function ProcessingScreen({ sessionId, claimId }: { sessionId?: string; claimId: string }) {
-  const [done, setDone] = useState(1);
+  const [activeStep, setActiveStep] = useState(1);
+  const [elapsed, setElapsed] = useState(0);
+
   useEffect(() => {
-    const max = PROCESSING_STEPS.length - 1;
-    const t = setInterval(() => setDone((d) => Math.min(d + 1, max)), 3500);
-    return () => clearInterval(t);
+    const timer = setInterval(() => setElapsed((e) => e + 1), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    let step = 1;
+    let total = 0;
+    const timeouts: ReturnType<typeof setTimeout>[] = [];
+    for (let i = 1; i < PROCESSING_STEPS.length; i++) {
+      total += PROCESSING_STEPS[i - 1].durationMs;
+      const t = setTimeout(() => setActiveStep(++step), total);
+      timeouts.push(t);
+    }
+    return () => timeouts.forEach(clearTimeout);
   }, []);
 
   if (!sessionId) {
@@ -165,6 +183,8 @@ function ProcessingScreen({ sessionId, claimId }: { sessionId?: string; claimId:
     );
   }
 
+  const remaining = Math.max(0, TOTAL_ESTIMATE_SECS - elapsed);
+
   return (
     <div className="flex flex-col items-center py-16 text-center">
       <div className="relative h-16 w-16 mb-6">
@@ -174,32 +194,63 @@ function ProcessingScreen({ sessionId, claimId }: { sessionId?: string; claimId:
           ✓
         </div>
       </div>
-      <h2 className="font-display text-xl font-medium text-ink">Finding what they didn&apos;t tell you…</h2>
-      <p className="mt-1 text-sm text-ink-muted">This page refreshes automatically — stay here</p>
-      <div className="mt-8 w-full max-w-xs space-y-3 text-left">
-        {PROCESSING_STEPS.map((s, i) => (
-          <div key={s} className="flex items-center gap-3">
+      <h2 className="font-display text-xl font-medium text-ink">Building your dispute package…</h2>
+      <p className="mt-1 text-sm text-ink-muted">
+        {remaining > 5
+          ? `About ${remaining} seconds remaining — stay here, this page auto-refreshes`
+          : "Almost done — stay here, this page auto-refreshes"}
+      </p>
+
+      <div className="mt-8 w-full max-w-sm space-y-2 text-left">
+        {PROCESSING_STEPS.map((s, i) => {
+          const isDone = i < activeStep;
+          const isCurrent = i === activeStep;
+          return (
             <div
-              className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold ${
-                i < done
-                  ? "bg-teal-700 text-white"
-                  : i === done
-                    ? "border-2 border-navy bg-white"
-                    : "border border-navy/10 bg-paper"
+              key={s.label}
+              className={`flex items-start gap-3 rounded-lg px-3 py-2.5 transition-all ${
+                isCurrent ? "bg-navy/5 border border-navy/10" : ""
               }`}
             >
-              {i < done ? "✓" : i === done ? <span className="block h-2 w-2 rounded-full bg-navy" /> : null}
+              <div
+                className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold transition-all ${
+                  isDone
+                    ? "bg-teal-700 text-white"
+                    : isCurrent
+                      ? "border-2 border-navy bg-white"
+                      : "border border-navy/10 bg-paper"
+                }`}
+              >
+                {isDone ? (
+                  "✓"
+                ) : isCurrent ? (
+                  <span className="block h-2 w-2 rounded-full bg-navy animate-pulse" />
+                ) : null}
+              </div>
+              <div>
+                <p
+                  className={`text-sm leading-tight ${
+                    isDone
+                      ? "text-teal-800 font-semibold"
+                      : isCurrent
+                        ? "font-semibold text-navy"
+                        : "text-ink-faint"
+                  }`}
+                >
+                  {s.label}
+                </p>
+                {isCurrent && (
+                  <p className="mt-0.5 text-xs text-ink-muted">{s.detail}</p>
+                )}
+              </div>
             </div>
-            <span
-              className={`text-sm ${
-                i < done ? "font-semibold text-teal-800" : i === done ? "font-semibold text-navy" : "text-ink-faint"
-              }`}
-            >
-              {s}
-            </span>
-          </div>
-        ))}
+          );
+        })}
       </div>
+
+      <p className="mt-8 text-xs text-ink-faint max-w-xs">
+        We&apos;ll also email you the report link — you can close this tab if needed.
+      </p>
     </div>
   );
 }
@@ -219,10 +270,22 @@ function MarkdownPaidReport({
 
   return (
     <div id="result-print-root">
+      {/* Print-only branding header */}
+      <div className="hidden print:flex items-center justify-between border-b-2 border-navy pb-4 mb-6">
+        <div className="flex items-baseline gap-2">
+          <span className="text-2xl font-bold text-navy" style={{ fontFamily: "serif" }}>ClaimGap</span>
+          <span className="text-xs text-navy/40 uppercase tracking-widest">claimgap.app</span>
+        </div>
+        <div className="text-right text-xs text-navy/50">
+          <div className="font-semibold">Dispute &amp; Recovery Report</div>
+          <div>Generated {today()}</div>
+        </div>
+      </div>
+
       <div className="border-b border-navy/10 pb-8 mb-10 print:pb-4 print:mb-6">
         <div className="flex items-start justify-between flex-wrap gap-4">
           <div>
-            <p className="text-xs font-bold uppercase tracking-widest text-navy/40 mb-1">ClaimGap — Full Paid Report</p>
+            <p className="text-xs font-bold uppercase tracking-widest text-navy/40 mb-1 print:hidden">ClaimGap — Full Paid Report</p>
             <h1 className="font-display text-3xl font-medium text-navy md:text-4xl">Dispute & recovery report</h1>
             <p className="mt-2 text-sm text-ink-muted">
               {claim.insurer} · {claim.insurance_type} · {claim.state} · Generated {today()}
@@ -267,7 +330,19 @@ function MarkdownPaidReport({
             {mm ? `${usd(mm.missed_amount_low)} – ${usd(mm.missed_amount_high)}` : "—"}
           </p>
           {mm?.strength_of_case && (
-            <p className="mt-1 text-xs font-semibold text-rust/80">Strength of case: {mm.strength_of_case}</p>
+            <>
+              <p className="mt-1 text-xs font-semibold text-rust/80">
+                Strength of case:{" "}
+                <span className={mm.strength_of_case === "Strong" ? "text-teal-700" : mm.strength_of_case === "Medium" ? "text-amber-700" : "text-rust"}>
+                  {mm.strength_of_case}
+                </span>
+              </p>
+              <p className="mt-0.5 text-xs text-rust/60 leading-snug">
+                {mm.strength_of_case === "Strong" && "Documents clearly support your claim."}
+                {mm.strength_of_case === "Medium" && "Good case — evidence in the checklist will strengthen it."}
+                {mm.strength_of_case === "Developing" && "Build the evidence checklist before sending your letter."}
+              </p>
+            </>
           )}
         </div>
       </div>
@@ -293,14 +368,14 @@ function MarkdownPaidReport({
       </article>
 
       {(full.counter_offer_letter?.subject || full.counter_offer_letter?.body) && (
-        <section className="mt-10 rounded-lg border-2 border-navy bg-white p-6 shadow-sm print:mt-8">
+        <section className="mt-10 rounded-lg border-2 border-navy bg-white p-6 shadow-sm print:mt-8 print-page-break">
           <SectionHeader n="+" title="Copy dispute letter" sub="Same text as in your report — quick copy" />
           {full.counter_offer_letter.subject ? <CopyBlock label="Subject Line" text={full.counter_offer_letter.subject} /> : null}
           <CopyBlock label="Letter Body" text={full.counter_offer_letter.body || ""} />
         </section>
       )}
 
-      <div className="mt-10 rounded-lg border border-navy/10 bg-paper p-5">
+      <div className="mt-10 rounded-lg border border-navy/10 bg-paper p-5 print:rounded-none print:border-x-0 print:border-b-0">
         <p className="mb-1 text-xs font-semibold text-ink-muted">Legal disclaimer</p>
         <p className="text-xs leading-relaxed text-ink-faint">{full.disclaimer}</p>
         <p className="mt-3 text-xs text-ink-faint">
@@ -309,6 +384,12 @@ function MarkdownPaidReport({
             info@globaldeal.app
           </a>
         </p>
+      </div>
+
+      {/* Print-only footer */}
+      <div className="hidden print:flex items-center justify-between border-t border-navy/20 pt-4 mt-6 text-xs text-navy/40">
+        <span>Prepared by <strong className="text-navy/60">ClaimGap.app</strong> — Informational only, not legal advice</span>
+        <span>claimgap.app</span>
       </div>
     </div>
   );

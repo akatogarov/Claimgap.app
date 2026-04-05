@@ -37,6 +37,20 @@ export async function GET(
       });
     }
 
+    if (row.status === "awaiting_verification") {
+      return NextResponse.json({
+        id: row.id,
+        status: row.status,
+        insurance_type: row.insurance_type,
+        insurer: row.insurer,
+        state: row.state,
+        offer_amount: row.offer_amount,
+        extracted_facts: analysis?.extracted_facts ?? null,
+        preview: null,
+        created_at: row.created_at,
+      });
+    }
+
     if (row.status === "preview") {
       return NextResponse.json({
         id: row.id,

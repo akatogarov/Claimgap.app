@@ -339,6 +339,11 @@ export async function POST(request: Request) {
           subject: "Your ClaimGap analysis is ready — here's what we found",
           html: buildEmailHtml({ resultUrl, insurer, insuranceType, gapRange }),
         });
+        // Mark email as sent in DB
+        await supabase
+          .from("claims")
+          .update({ email_sent_at: new Date().toISOString() })
+          .eq("id", resolvedClaimId);
       } catch (e) { console.error("Email Day-0 failed:", e); }
 
       // Full outcome sequence — scheduled. If user responds early, outcome page

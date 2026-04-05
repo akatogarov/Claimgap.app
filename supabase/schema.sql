@@ -14,9 +14,10 @@ create table if not exists public.claims (
   state text not null,
   description text not null,
   offer_amount numeric,
-  -- status: preview | awaiting_clarification | paid | failed
+  -- status: preview | awaiting_clarification | awaiting_verification | paid | failed
   status text not null default 'preview',
   stripe_session_id text,
+  email_sent_at timestamptz,
   analysis jsonb,
   created_at timestamptz not null default now()
 );
@@ -27,6 +28,9 @@ create index if not exists claims_insurer_normalized_idx on public.claims (insur
 
 -- Migration: add insurer_normalized to existing tables
 alter table public.claims add column if not exists insurer_normalized text;
+
+-- Migration: add email_sent_at for report delivery tracking
+alter table public.claims add column if not exists email_sent_at timestamptz;
 
 create table if not exists public.outcomes (
   id uuid primary key default gen_random_uuid(),

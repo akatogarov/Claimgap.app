@@ -247,9 +247,20 @@ export function PreviewClient({ claimId }: { claimId: string }) {
             </ul>
           )}
           {areas.map((area, i) => (
-            <div key={i} className="rounded-lg border border-rust/15 bg-white p-4 text-left">
-              <p className="text-xs font-bold uppercase tracking-wide text-rust">{area.title || titles[i] || `Area ${i + 1}`}</p>
-              <p className="mt-3 text-sm leading-relaxed text-ink">{previewBlurb(area)}</p>
+            <div key={i} className="flex items-center gap-3 rounded-lg border border-rust/15 bg-white px-4 py-3 text-left">
+              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded border border-rust/25 bg-rust-faint text-xs font-bold text-rust">
+                {i + 1}
+              </span>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-ink">{area.title || titles[i] || `Underpayment area ${i + 1}`}</p>
+                <p className="mt-0.5 text-xs text-ink-faint">
+                  {area.gap_anchor_label || `Potential gap identified`} · Details in full report
+                </p>
+              </div>
+              <svg viewBox="0 0 16 16" fill="currentColor" className="h-4 w-4 shrink-0 text-navy/20">
+                <path fillRule="evenodd" d="M11.5 8a3.5 3.5 0 11-7 0 3.5 3.5 0 017 0zm-3.5 2a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd"/>
+                <path d="M8 1a.75.75 0 01.75.75v1a.75.75 0 01-1.5 0v-1A.75.75 0 018 1zm0 12.5a.75.75 0 01.75.75v1a.75.75 0 01-1.5 0v-1A.75.75 0 018 13.5zm7-5.5a.75.75 0 01-.75.75h-1a.75.75 0 010-1.5h1A.75.75 0 0115 8zM1 8a.75.75 0 01.75-.75h1a.75.75 0 010 1.5h-1A.75.75 0 011 8z"/>
+              </svg>
             </div>
           ))}
         </div>
