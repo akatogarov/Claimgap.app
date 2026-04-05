@@ -189,7 +189,7 @@ export function ClaimLandingPage({
             </svg>
           </Link>
           <p className="mt-4 text-xs text-ink-faint">
-            Insurance appeals have deadlines — don't wait.
+            Insurance appeals have deadlines — don&apos;t wait.
           </p>
         </div>
       </section>
