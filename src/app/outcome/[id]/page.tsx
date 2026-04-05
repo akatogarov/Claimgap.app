@@ -21,14 +21,18 @@ export default function OutcomePage({
       ? "One quick question about your report"
       : step === "result"
         ? "How did your dispute go?"
-        : "How did it go?";
+        : step === "preview_feedback"
+          ? "What stopped you from getting the report?"
+          : "How did it go?";
 
   const sub =
     step === "letter"
       ? "Takes 5 seconds. Your answer helps us improve ClaimGap."
       : step === "result"
         ? "Your outcome helps us understand what works — and improve our reports."
-        : "Quick follow-up on your ClaimGap report. Your answers help us improve and stay accountable.";
+        : step === "preview_feedback"
+          ? "One tap — your feedback helps us improve ClaimGap for everyone."
+          : "Quick follow-up on your ClaimGap report. Your answers help us improve and stay accountable.";
 
   return (
     <div className="mx-auto max-w-lg px-4 py-12 md:px-6 md:py-16">

@@ -61,7 +61,19 @@ type Health = {
   publicUrl: string | null;
 };
 
-type Tab = "claims" | "analytics" | "health";
+type OutcomeRow = {
+  id: string;
+  claim_id: string;
+  result: string;
+  additional_amount: number | null;
+  reported_at: string;
+};
+
+type ClaimWithOutcomes = ClaimRow & {
+  outcomes?: OutcomeRow[];
+};
+
+type Tab = "claims" | "outcomes" | "analytics" | "health";
 
 /* ─── Helpers ───────────────────────────────────────────────────────────── */
 
@@ -95,7 +107,7 @@ function StatCard({
   );
 }
 
-function HealthRow({ label, ok, note }: { label: string; ok: boolean; note?: string }) {
+function HealthRow({ label, ok, note, optional }: { label: string; ok: boolean; note?: string; optional?: boolean }) {
   return (
     <div className="flex items-start justify-between gap-4 py-3 border-b border-slate-100 last:border-0">
       <div>
@@ -104,10 +116,10 @@ function HealthRow({ label, ok, note }: { label: string; ok: boolean; note?: str
       </div>
       <span
         className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-semibold ${
-          ok ? "bg-emerald-100 text-emerald-700" : "bg-red-100 text-red-700"
+          ok ? "bg-emerald-100 text-emerald-700" : optional ? "bg-amber-100 text-amber-700" : "bg-red-100 text-red-700"
         }`}
       >
-        {ok ? "OK" : "MISSING"}
+        {ok ? "OK" : optional ? "OPTIONAL" : "MISSING"}
       </span>
     </div>
   );
@@ -157,6 +169,41 @@ function DailyBars({ data }: { data: DailyPoint[] }) {
 
 /* ─── Main ──────────────────────────────────────────────────────────────── */
 
+const OUTCOME_LABELS: Record<string, string> = {
+  step1_sent: "✓ Sent letter",
+  step1_pending: "○ Not yet",
+  step1_dropped: "✕ Dropped",
+  step2_won: "💰 Got more money",
+  step2_waiting: "⏳ Waiting",
+  step2_denied: "✕ Denied",
+  step2_no_action: "— No action",
+  pf_expensive: "Too expensive",
+  pf_trust: "Didn't trust estimate",
+  pf_not_ready: "Not ready yet",
+  pf_resolved: "Already resolved",
+  pf_other: "Other",
+};
+
+type OutcomeTrackRow = {
+  id: string;
+  email: string;
+  insurance_type: string;
+  insurer: string;
+  state: string;
+  status: string;
+  offer_amount: number | null;
+  created_at: string;
+  step1_result: string | null;
+  step1_at: string | null;
+  step2_result: string | null;
+  step2_at: string | null;
+  step2_recovered: number | null;
+  preview_feedback: string | null;
+  feedback_at: string | null;
+  reminder_step1_sent: boolean;
+  reminder_step2_sent: boolean;
+};
+
 export function AdminDashboard() {
   const router = useRouter();
   const [tab, setTab] = useState<Tab>("claims");
@@ -168,6 +215,12 @@ export function AdminDashboard() {
   const [claims, setClaims] = useState<ClaimRow[]>([]);
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState<string>("all");
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  // Outcomes tab
+  const [outcomeRows, setOutcomeRows] = useState<OutcomeTrackRow[]>([]);
+  const [outcomeLoaded, setOutcomeLoaded] = useState(false);
+  const [outcomeFilter, setOutcomeFilter] = useState<string>("all");
 
   // Analytics + Health
   const [stats, setStats] = useState<Stats | null>(null);
@@ -189,6 +242,31 @@ export function AdminDashboard() {
     setHealth(j.health);
   }, []);
 
+  const loadOutcomes = useCallback(async () => {
+    if (outcomeLoaded) return;
+    const res = await fetch("/api/admin/outcomes");
+    const j = await res.json();
+    if (!res.ok) throw new Error(j.error ?? "Error loading outcomes");
+    setOutcomeRows(j.rows ?? []);
+    setOutcomeLoaded(true);
+  }, [outcomeLoaded]);
+
+  async function deleteClaim(id: string) {
+    if (!confirm("Delete this claim permanently? This cannot be undone.")) return;
+    setDeletingId(id);
+    try {
+      const res = await fetch(`/api/admin/claims/${id}`, { method: "DELETE" });
+      if (!res.ok) { alert("Delete failed."); return; }
+      setClaims((prev) => prev.filter((c) => c.id !== id));
+    } finally {
+      setDeletingId(null);
+    }
+  }
+
+  function exportCsv() {
+    window.open("/api/admin/export", "_blank");
+  }
+
   useEffect(() => {
     let cancelled = false;
     (async () => {
@@ -203,10 +281,13 @@ export function AdminDashboard() {
         if (!cancelled) setLoading(false);
       }
     })();
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, [loadClaims, loadStats, router]);
+
+  // Load outcomes lazily when tab is clicked
+  useEffect(() => {
+    if (tab === "outcomes") loadOutcomes().catch(console.error);
+  }, [tab, loadOutcomes]);
 
   async function logout() {
     await fetch("/api/admin/logout", { method: "POST" });
@@ -250,7 +331,7 @@ export function AdminDashboard() {
         health.adminSecret,
         health.adminJwt,
         health.adminEmails,
-        health.cronSecret,
+        // cronSecret is optional — not counted as a blocker
         health.publicUrl !== null,
       ].filter((v) => !v).length
     : 0;
@@ -273,8 +354,8 @@ export function AdminDashboard() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 border-b border-slate-200 mb-6">
-        {(["claims", "analytics", "health"] as Tab[]).map((t) => (
+      <div className="flex flex-wrap gap-1 border-b border-slate-200 mb-6">
+        {(["claims", "outcomes", "analytics", "health"] as Tab[]).map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
@@ -322,10 +403,16 @@ export function AdminDashboard() {
               <option value="awaiting_clarification">Awaiting clarification</option>
             </select>
             <span className="self-center text-sm text-slate-500">{filteredClaims.length} results</span>
+            <button
+              onClick={exportCsv}
+              className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition"
+            >
+              ↓ Export CSV
+            </button>
           </div>
 
           <div className="overflow-x-auto rounded-xl border border-navy/10">
-            <table className="w-full min-w-[720px] text-left text-sm">
+            <table className="w-full min-w-[760px] text-left text-sm">
               <thead className="bg-slate-50 text-xs font-semibold uppercase text-slate-600">
                 <tr>
                   <th className="px-4 py-3">Created</th>
@@ -375,9 +462,16 @@ export function AdminDashboard() {
                       <Link href={`/result/${c.id}`} className="text-navy underline text-xs mr-3">
                         Result
                       </Link>
-                      <Link href={`/preview/${c.id}`} className="text-slate-400 underline text-xs">
+                      <Link href={`/preview/${c.id}`} className="text-slate-400 underline text-xs mr-3">
                         Preview
                       </Link>
+                      <button
+                        onClick={() => deleteClaim(c.id)}
+                        disabled={deletingId === c.id}
+                        className="text-red-400 hover:text-red-600 text-xs transition disabled:opacity-40"
+                      >
+                        {deletingId === c.id ? "…" : "Delete"}
+                      </button>
                     </td>
                   </tr>
                 ))}
@@ -387,6 +481,108 @@ export function AdminDashboard() {
               <p className="px-4 py-8 text-center text-slate-500">No claims match your filter.</p>
             )}
           </div>
+        </div>
+      )}
+
+      {/* ── OUTCOMES ───────────────────────────────────────────────────────── */}
+      {tab === "outcomes" && (
+        <div>
+          <div className="flex flex-wrap gap-3 mb-4 items-center">
+            <p className="text-sm text-slate-500 flex-1">
+              Tracks follow-up responses from paid users (letter sent? result?) and preview abandonment feedback.
+            </p>
+            <select
+              value={outcomeFilter}
+              onChange={(e) => setOutcomeFilter(e.target.value)}
+              className="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-navy/30"
+            >
+              <option value="all">All</option>
+              <option value="paid">Paid — no response yet</option>
+              <option value="paid_responded">Paid — responded</option>
+              <option value="preview_feedback">Preview feedback received</option>
+              <option value="preview_no_feedback">Preview — no feedback</option>
+            </select>
+          </div>
+
+          {!outcomeLoaded ? (
+            <div className="flex items-center gap-2 py-10 justify-center text-slate-500">
+              <span className="h-4 w-4 animate-spin rounded-full border-2 border-navy border-t-transparent" />
+              Loading…
+            </div>
+          ) : (
+            <div className="overflow-x-auto rounded-xl border border-navy/10">
+              <table className="w-full min-w-[900px] text-left text-sm">
+                <thead className="bg-slate-50 text-xs font-semibold uppercase text-slate-600">
+                  <tr>
+                    <th className="px-3 py-3">Created</th>
+                    <th className="px-3 py-3">Email</th>
+                    <th className="px-3 py-3">Status</th>
+                    <th className="px-3 py-3">Offer</th>
+                    <th className="px-3 py-3">Day 7 (Letter)</th>
+                    <th className="px-3 py-3">Day 30 (Result)</th>
+                    <th className="px-3 py-3">Recovered</th>
+                    <th className="px-3 py-3">Preview Feedback</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {outcomeRows
+                    .filter((r) => {
+                      if (outcomeFilter === "paid") return r.status === "paid" && !r.step1_result;
+                      if (outcomeFilter === "paid_responded") return r.status === "paid" && (!!r.step1_result || !!r.step2_result);
+                      if (outcomeFilter === "preview_feedback") return !!r.preview_feedback;
+                      if (outcomeFilter === "preview_no_feedback") return r.status === "preview" && !r.preview_feedback;
+                      return true;
+                    })
+                    .map((r) => (
+                      <tr key={r.id} className="bg-white hover:bg-slate-50 transition-colors">
+                        <td className="px-3 py-3 whitespace-nowrap text-slate-500 text-xs">
+                          {new Date(r.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                        </td>
+                        <td className="px-3 py-3 text-slate-700 max-w-[160px] truncate text-xs">{r.email}</td>
+                        <td className="px-3 py-3">
+                          <span className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${
+                            r.status === "paid" ? "bg-emerald-100 text-emerald-800" : "bg-amber-100 text-amber-800"
+                          }`}>{r.status}</span>
+                        </td>
+                        <td className="px-3 py-3 text-xs font-medium">
+                          {r.offer_amount != null ? usd(Number(r.offer_amount)) : "—"}
+                        </td>
+                        <td className="px-3 py-3 text-xs">
+                          {r.step1_result
+                            ? <span className="text-slate-700">{OUTCOME_LABELS[r.step1_result] ?? r.step1_result}</span>
+                            : r.reminder_step1_sent
+                              ? <span className="text-slate-400">Reminder sent</span>
+                              : <span className="text-slate-300">—</span>
+                          }
+                        </td>
+                        <td className="px-3 py-3 text-xs">
+                          {r.step2_result
+                            ? <span className={r.step2_result === "step2_won" ? "text-emerald-700 font-semibold" : "text-slate-700"}>
+                                {OUTCOME_LABELS[r.step2_result] ?? r.step2_result}
+                              </span>
+                            : r.reminder_step2_sent
+                              ? <span className="text-slate-400">Reminder sent</span>
+                              : <span className="text-slate-300">—</span>
+                          }
+                        </td>
+                        <td className="px-3 py-3 text-xs font-semibold text-emerald-700">
+                          {r.step2_recovered != null ? usd(r.step2_recovered) : "—"}
+                        </td>
+                        <td className="px-3 py-3 text-xs">
+                          {r.preview_feedback
+                            ? <span className="text-slate-700">{OUTCOME_LABELS[r.preview_feedback] ?? r.preview_feedback}</span>
+                            : <span className="text-slate-300">—</span>
+                          }
+                        </td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+              {outcomeRows.length === 0 && (
+                <p className="px-4 py-8 text-center text-slate-500">No outcome data yet — responses appear here as users reply to follow-up emails.</p>
+              )}
+            </div>
+          )}
         </div>
       )}
 
@@ -578,7 +774,8 @@ export function AdminDashboard() {
             <HealthRow
               label="CRON_SECRET"
               ok={health.cronSecret}
-              note="Secures /api/cron/outcome-emails. Set any random string; Vercel sends it as Authorization: Bearer."
+              note="Optional — secures /api/cron/outcome-emails manual trigger. Not required for normal operation (outcome emails are scheduled via Resend)."
+              optional
             />
           </div>
 
@@ -592,25 +789,20 @@ export function AdminDashboard() {
               }`}
             >
               {health.publicUrl ??
-                "NOT SET — set to https://claimgap.app in Vercel env vars"}
+                "NOT SET — set to https://claimgap.app in Cloudflare Pages env vars"}
             </p>
           </div>
 
           <div className="mt-6 rounded-xl bg-slate-50 border border-slate-200 px-5 py-4 text-xs text-slate-600 space-y-1.5">
             <p className="font-semibold text-slate-700 mb-2">Setup checklist:</p>
-            <p>
-              1. <strong>Resend:</strong> resend.com → create account → verify domain →
-              copy API key → set RESEND_API_KEY and RESEND_FROM_EMAIL
-            </p>
-            <p>
-              2. <strong>Stripe webhook:</strong> Stripe Dashboard → Webhooks → Add endpoint
+            <p>1. <strong>Resend:</strong> resend.com → verify domain → copy API key → set RESEND_API_KEY and RESEND_FROM_EMAIL</p>
+            <p>2. <strong>Stripe webhook:</strong> Stripe Dashboard → Webhooks → Add endpoint
               <code className="bg-slate-200 px-1 rounded mx-1">https://claimgap.app/api/webhook</code>
-              → select <em>checkout.session.completed</em> → copy secret
+              → select <em>checkout.session.completed</em> → copy Signing Secret → set STRIPE_WEBHOOK_SECRET
             </p>
-            <p>
-              3. <strong>Vercel:</strong> Project Settings → Environment Variables → add all
-              missing vars → Redeploy
-            </p>
+            <p>3. <strong>Cloudflare Pages:</strong> Pages → claimgap → Settings → Environment Variables → add missing vars → Redeploy</p>
+            <p>4. <strong>Outcome emails:</strong> scheduled automatically via Resend when user pays — Day 7, 14, 21, 28 (letter check) + Day 35, 60 (result check).</p>
+            <p>5. <strong>Preview feedback:</strong> 1 email 24h after preview — asks why they didn&apos;t buy.</p>
           </div>
         </div>
       )}

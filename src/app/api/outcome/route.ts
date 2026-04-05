@@ -13,6 +13,12 @@ const ALLOWED_RESULTS = new Set([
   "step2_waiting",
   "step2_denied",
   "step2_no_action",
+  // Preview feedback — why didn't you buy?
+  "pf_expensive",
+  "pf_trust",
+  "pf_not_ready",
+  "pf_resolved",
+  "pf_other",
   // Legacy values
   "yes",
   "no",
@@ -48,6 +54,7 @@ export async function POST(request: Request) {
     // Idempotent: if a response for this step already exists, skip duplicate
     const stepPrefix = result.startsWith("step1_") ? "step1_"
       : result.startsWith("step2_") ? "step2_"
+      : result.startsWith("pf_") ? "pf_"
       : null;
     if (stepPrefix) {
       const { data: existing } = await supabase

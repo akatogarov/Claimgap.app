@@ -3,13 +3,22 @@
 import { useEffect, useState } from "react";
 import { LoadingButton } from "./LoadingButton";
 
-type Step = "letter" | "result" | null;
+type Step = "letter" | "result" | "preview_feedback" | null;
 
 // Step 1 options
 const LETTER_OPTIONS = [
   { value: "step1_sent", label: "Yes, I sent it", icon: "✓" },
   { value: "step1_pending", label: "Not yet — still working on it", icon: "○" },
   { value: "step1_dropped", label: "I decided not to dispute", icon: "✕" },
+] as const;
+
+// Preview feedback options
+const PREVIEW_FEEDBACK_OPTIONS = [
+  { value: "pf_expensive",  label: "The price ($149) felt too high", icon: "💰" },
+  { value: "pf_trust",      label: "I wasn't sure the estimate was accurate", icon: "🤔" },
+  { value: "pf_not_ready",  label: "I need more time to decide", icon: "⏳" },
+  { value: "pf_resolved",   label: "I already resolved my claim", icon: "✓" },
+  { value: "pf_other",      label: "Something else", icon: "—" },
 ] as const;
 
 // Step 2 options
@@ -22,13 +31,17 @@ const RESULT_OPTIONS = [
 
 type LetterValue = (typeof LETTER_OPTIONS)[number]["value"];
 type ResultValue = (typeof RESULT_OPTIONS)[number]["value"];
-type AnyValue = LetterValue | ResultValue | "yes" | "no" | "negotiating";
+type FeedbackValue = (typeof PREVIEW_FEEDBACK_OPTIONS)[number]["value"];
+type AnyValue = LetterValue | ResultValue | FeedbackValue | "yes" | "no" | "negotiating";
 
 function isLetterValue(v: string): v is LetterValue {
   return LETTER_OPTIONS.some((o) => o.value === v);
 }
 function isResultValue(v: string): v is ResultValue {
   return RESULT_OPTIONS.some((o) => o.value === v);
+}
+function isFeedbackValue(v: string): v is FeedbackValue {
+  return PREVIEW_FEEDBACK_OPTIONS.some((o) => o.value === v);
 }
 
 async function saveOutcome(claimId: string, result: string, additionalAmount?: number) {
@@ -57,7 +70,10 @@ export function OutcomeForm({
   answer?: string;
 }) {
   const activeStep: Step =
-    step === "letter" ? "letter" : step === "result" ? "result" : null;
+    step === "letter" ? "letter"
+    : step === "result" ? "result"
+    : step === "preview_feedback" ? "preview_feedback"
+    : null;
 
   const [selected, setSelected] = useState<AnyValue | null>(null);
   const [additionalAmount, setAdditionalAmount] = useState("");
@@ -73,7 +89,9 @@ export function OutcomeForm({
         ? answer
         : activeStep === "result" && isResultValue(answer)
           ? answer
-          : null;
+          : activeStep === "preview_feedback" && isFeedbackValue(answer)
+            ? answer
+            : null;
     if (!value) return;
     setLoading(true);
     saveOutcome(claimId, value)
@@ -225,6 +243,46 @@ export function OutcomeForm({
             </LoadingButton>
           </>
         )}
+      </div>
+    );
+  }
+
+  // Preview feedback: why didn't they buy?
+  if (activeStep === "preview_feedback") {
+    return (
+      <div className="mt-10 space-y-8">
+        <div className="space-y-3">
+          <p className="font-semibold text-ink">What stopped you from getting the full report?</p>
+          <p className="text-sm text-ink-muted">One tap — helps us improve.</p>
+          <div className="flex flex-col gap-2">
+            {PREVIEW_FEEDBACK_OPTIONS.map((opt) => (
+              <button
+                key={opt.value}
+                type="button"
+                onClick={() => setSelected(opt.value)}
+                className={`flex items-center gap-3 rounded-lg border-2 px-4 py-3 text-left font-medium transition ${
+                  selected === opt.value
+                    ? "border-navy bg-navy text-white"
+                    : "border-navy/15 bg-white text-navy hover:border-navy/30"
+                }`}
+              >
+                <span className="w-5 shrink-0 text-center text-sm">{opt.icon}</span>
+                {opt.label}
+              </button>
+            ))}
+          </div>
+        </div>
+        {error && (
+          <div className="rounded-lg border border-rust/30 bg-rust-faint px-4 py-3 text-sm text-rust">{error}</div>
+        )}
+        <LoadingButton
+          type="button"
+          loading={loading}
+          onClick={submit}
+          className="w-full bg-navy py-4 text-white hover:bg-navy-800 sm:w-auto sm:px-10"
+        >
+          Submit
+        </LoadingButton>
       </div>
     );
   }
