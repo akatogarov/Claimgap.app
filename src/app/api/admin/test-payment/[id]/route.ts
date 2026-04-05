@@ -12,8 +12,13 @@ export async function POST(
   _req: Request,
   { params }: { params: { id: string } }
 ) {
-  // Verify admin
-  const token = cookies().get(ADMIN_COOKIE_NAME)?.value;
+  // Verify admin — cookies() may throw in some edge environments; treat failure as unauthorized
+  let token: string | undefined;
+  try {
+    token = cookies().get(ADMIN_COOKIE_NAME)?.value;
+  } catch {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
   if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const session = await verifyAdminToken(token);
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

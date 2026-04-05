@@ -47,11 +47,16 @@ export function PreviewClient({ claimId }: { claimId: string }) {
     (async () => {
       try {
         const res = await fetch(`/api/claim/${claimId}`);
-        const j = await res.json();
-        if (!res.ok) throw new Error(j.error ?? "Failed to load preview.");
+        let j: PreviewPayload;
+        try {
+          j = await res.json();
+        } catch {
+          throw new Error(`Server error (${res.status}). Please refresh the page.`);
+        }
+        if (!res.ok) throw new Error((j as { error?: string }).error ?? "Failed to load preview.");
         if (!cancelled) setData(j);
       } catch (e) {
-        if (!cancelled) setError(e instanceof Error ? e.message : "Error");
+        if (!cancelled) setError(e instanceof Error ? e.message : "Could not load preview. Please refresh.");
       }
     })();
     return () => {
@@ -75,7 +80,12 @@ export function PreviewClient({ claimId }: { claimId: string }) {
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ claim_id: claimId }),
       });
-      const j = await res.json();
+      let j: { error?: string; url?: string };
+      try {
+        j = await res.json();
+      } catch {
+        throw new Error(`Server error (${res.status}). Please try again.`);
+      }
       if (!res.ok) throw new Error(j.error ?? "Could not start checkout.");
       if (j.url) window.location.href = j.url;
     } catch (e) {
@@ -90,7 +100,12 @@ export function PreviewClient({ claimId }: { claimId: string }) {
     setError(null);
     try {
       const res = await fetch(`/api/admin/test-payment/${claimId}`, { method: "POST" });
-      const j = await res.json();
+      let j: { error?: string; ok?: boolean };
+      try {
+        j = await res.json();
+      } catch {
+        throw new Error(`Server error (${res.status}). Analysis may still be running — refresh in 60 seconds.`);
+      }
       if (!res.ok) throw new Error(j.error ?? "Test payment failed.");
       window.location.href = `/result/${claimId}`;
     } catch (e) {
@@ -109,12 +124,22 @@ export function PreviewClient({ claimId }: { claimId: string }) {
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ answers }),
       });
-      const j = await res.json();
+      let j: { error?: string };
+      try {
+        j = await res.json();
+      } catch {
+        throw new Error(`Server error (${res.status}). Please try again.`);
+      }
       if (!res.ok) throw new Error(j.error ?? "Could not save answers.");
       const refresh = await fetch(`/api/claim/${claimId}`);
-      const payload = await refresh.json();
-      if (!refresh.ok) throw new Error(payload.error ?? "Failed to reload.");
-      setData(payload);
+      let payload: typeof j & Record<string, unknown>;
+      try {
+        payload = await refresh.json();
+      } catch {
+        throw new Error("Could not reload claim. Please refresh the page.");
+      }
+      if (!refresh.ok) throw new Error((payload as { error?: string }).error ?? "Failed to reload.");
+      setData(payload as Parameters<typeof setData>[0]);
     } catch (e) {
       setClarifyErr(e instanceof Error ? e.message : "Failed.");
     } finally {

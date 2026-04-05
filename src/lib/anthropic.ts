@@ -36,6 +36,68 @@ async function messagesCreate(body: Record<string, unknown>) {
   }>;
 }
 
+/**
+ * Streaming variant — collects the full text via SSE.
+ * Cloudflare Workers enforce a 30-second timeout per subrequest.
+ * With streaming, the first token arrives in ~1s, keeping the
+ * connection alive so long-running Sonnet calls don't hit the cap.
+ */
+async function messagesCreateStreaming(
+  body: Record<string, unknown>
+): Promise<{ content: Array<{ type: string; text?: string }> }> {
+  const res = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "x-api-key": getKey(),
+      "anthropic-version": "2023-06-01",
+    },
+    body: JSON.stringify({ ...body, stream: true }),
+  });
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(`Anthropic API error: ${res.status} ${err}`);
+  }
+  if (!res.body) {
+    throw new Error("Anthropic streaming response had no body");
+  }
+
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let accumulated = "";
+  let sseBuffer = "";
+
+  while (true) {
+    const { value, done } = await reader.read();
+    if (done) break;
+    sseBuffer += decoder.decode(value, { stream: true });
+    const lines = sseBuffer.split("\n");
+    sseBuffer = lines.pop() ?? "";
+    for (const line of lines) {
+      if (!line.startsWith("data: ")) continue;
+      const payload = line.slice(6).trim();
+      if (!payload || payload === "[DONE]") continue;
+      try {
+        const evt = JSON.parse(payload) as {
+          type: string;
+          delta?: { type?: string; text?: string };
+        };
+        if (
+          evt.type === "content_block_delta" &&
+          evt.delta?.type === "text_delta" &&
+          evt.delta.text
+        ) {
+          accumulated += evt.delta.text;
+        }
+      } catch {
+        // skip malformed SSE line
+      }
+    }
+  }
+
+  return { content: [{ type: "text", text: accumulated }] };
+}
+
 function extractFirstJsonObject(raw: string): string {
   let s = raw.trim();
   const fence = s.match(/```(?:json)?\s*([\s\S]*?)```/);
@@ -547,7 +609,10 @@ OUTPUT: Return ONLY valid JSON (no markdown fences). The JSON must include:
 
 5) "disclaimer": "Informational only; not legal advice."`;
 
-  const data = await messagesCreate({
+  // Use streaming to avoid Cloudflare's 30-second subrequest timeout.
+  // Sonnet with 8192 max_tokens can take 40-60s; streaming keeps the
+  // connection alive by sending tokens as soon as generation starts.
+  const data = await messagesCreateStreaming({
     model: SONNET,
     max_tokens: 8192,
     system,
