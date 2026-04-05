@@ -175,7 +175,12 @@ function VerificationScreen({
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ confirmed_facts: fields }),
       });
-      const j = await res.json();
+      let j: { error?: string };
+      try {
+        j = await res.json();
+      } catch {
+        throw new Error(`Server error (${res.status}). Please try again.`);
+      }
       if (!res.ok) throw new Error(j.error ?? "Could not confirm details.");
       onDone();
     } catch (e) {

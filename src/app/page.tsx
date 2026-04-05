@@ -236,8 +236,11 @@ export default async function HomePage() {
                 </a>
                 <Link
                   href="/access"
-                  className="inline-flex items-center rounded-lg border border-navy/15 bg-white/60 px-6 py-3.5 text-base font-semibold text-navy/70 transition hover:border-navy/30 hover:text-navy"
+                  className="inline-flex items-center gap-2 rounded-lg border-2 border-navy/30 bg-white px-6 py-3.5 text-base font-semibold text-navy transition hover:border-navy/60 hover:bg-navy/5"
                 >
+                  <svg viewBox="0 0 16 16" fill="currentColor" className="h-4 w-4 opacity-70">
+                    <path d="M14 4.5V14a2 2 0 01-2 2H4a2 2 0 01-2-2V2a2 2 0 012-2h5.5L14 4.5zm-3 0A1.5 1.5 0 019.5 3V1H4a1 1 0 00-1 1v12a1 1 0 001 1h8a1 1 0 001-1V4.5h-2z"/>
+                  </svg>
                   Already have a report?
                 </Link>
               </div>
@@ -250,6 +253,9 @@ export default async function HomePage() {
                   Free preview · No card until you see results · Full report $149 flat · 30-day refund
                 </span>
               </div>
+              <p className="mt-3 text-xs text-ink-faint">
+                Paid reports are stored for 90 days — accessible anytime via your email link.
+              </p>
 
               <div className="mt-12 grid grid-cols-3 gap-6 border-t border-navy/10 pt-10 sm:max-w-lg">
                 <div>

@@ -4,12 +4,14 @@ import type { ClaimRow, StoredAnalysis } from "@/lib/types";
 
 export const runtime = 'edge';
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 export async function GET(
   _request: Request,
   context: { params: { id: string } }
 ) {
   const { id } = context.params;
-  if (!id) {
+  if (!id || !UUID_RE.test(id)) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
@@ -76,7 +78,6 @@ export async function GET(
     return NextResponse.json({
       id: row.id,
       status: row.status,
-      email: row.email,
       insurance_type: row.insurance_type,
       insurer: row.insurer,
       state: row.state,

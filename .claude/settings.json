@@ -21,7 +21,22 @@
       "Bash(node_modules/.bin/tsc --noEmit)",
       "Bash(node_modules\\\\\\\\.bin\\\\\\\\tsc --noEmit)",
       "Bash(git add:*)",
-      "Bash(git commit -m ':*)"
+      "Bash(git commit -m ':*)",
+      "Bash(git push:*)",
+      "Bash(powershell.exe -Command \"cd 'C:\\\\Users\\\\katog\\\\claimgap.app'; npm run deploy 2>&1\")",
+      "Bash(powershell.exe -Command \"gh run list --repo akatogarov/Claimgap.app --limit 3 2>&1\")",
+      "Bash(powershell.exe -Command \"gh workflow run deploy.yml --repo akatogarov/Claimgap.app 2>&1\")",
+      "Bash(where gh:*)",
+      "Read(//usr/local/bin/**)",
+      "Bash(powershell.exe -Command \"Get-Command gh -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source\")",
+      "Bash(powershell.exe -Command \"& 'C:\\\\Program Files\\\\GitHub CLI\\\\gh.exe' --version 2>&1; & 'C:\\\\Users\\\\katog\\\\AppData\\\\Local\\\\GitHubCLI\\\\bin\\\\gh.exe' --version 2>&1\")",
+      "Bash(powershell.exe -Command \"npx wrangler --version 2>&1\")",
+      "Bash(powershell.exe -Command ':*)",
+      "Bash(powershell.exe -Command \"npx vercel --version 2>&1\")",
+      "Bash(powershell.exe -Command \"cd 'C:\\\\Users\\\\katog\\\\claimgap.app'; npx vercel build --yes 2>&1 | Select-Object -Last 15\")",
+      "Bash(powershell.exe -Command \"Remove-Item -Recurse -Force 'C:\\\\Users\\\\katog\\\\claimgap.app\\\\.vercel' -ErrorAction SilentlyContinue; cd 'C:\\\\Users\\\\katog\\\\claimgap.app'; npx vercel build --yes 2>&1 | Select-Object -Last 10\")",
+      "Bash(powershell.exe -Command \"cd 'C:\\\\Users\\\\katog\\\\claimgap.app'; git commit --allow-empty -m 'ci: trigger deploy after secrets configured'; git push origin main 2>&1\")",
+      "Bash(powershell.exe -Command \"cd 'C:\\\\Users\\\\katog\\\\claimgap.app'; git add src/app/page.tsx; git commit -m 'feat: add Already have a report button to homepage hero'; git push origin main 2>&1 | tail -5\")"
     ],
     "additionalDirectories": [
       "c:\\Users\\katog\\claimgap.app\\src\\app\\api\\admin",

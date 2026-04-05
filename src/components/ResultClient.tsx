@@ -184,9 +184,18 @@ function ProcessingScreen({ sessionId, claimId }: { sessionId?: string; claimId:
   }
 
   const remaining = Math.max(0, TOTAL_ESTIMATE_SECS - elapsed);
+  const progressPct = Math.min(100, Math.round((elapsed / TOTAL_ESTIMATE_SECS) * 100));
+  const stepsDone = PROCESSING_STEPS.filter((_, i) => i < activeStep).length;
+  const totalSteps = PROCESSING_STEPS.length;
+
+  function fmtTime(secs: number) {
+    if (secs < 60) return `${secs}s`;
+    return `${Math.floor(secs / 60)}m ${secs % 60}s`;
+  }
 
   return (
-    <div className="flex flex-col items-center py-16 text-center">
+    <div className="flex flex-col items-center py-12 text-center">
+      {/* Spinner */}
       <div className="relative h-16 w-16 mb-6">
         <div className="absolute inset-0 rounded-full border-4 border-navy/10" />
         <div className="absolute inset-0 animate-spin rounded-full border-4 border-transparent border-t-navy" />
@@ -194,14 +203,36 @@ function ProcessingScreen({ sessionId, claimId }: { sessionId?: string; claimId:
           ✓
         </div>
       </div>
+
       <h2 className="font-display text-xl font-medium text-ink">Building your dispute package…</h2>
       <p className="mt-1 text-sm text-ink-muted">
-        {remaining > 5
-          ? `About ${remaining} seconds remaining — stay here, this page auto-refreshes`
-          : "Almost done — stay here, this page auto-refreshes"}
+        Stay here — this page auto-refreshes when ready
       </p>
 
-      <div className="mt-8 w-full max-w-sm space-y-2 text-left">
+      {/* Overall progress bar */}
+      <div className="mt-6 w-full max-w-sm">
+        <div className="flex items-center justify-between text-xs text-ink-faint mb-1.5">
+          <span className="font-semibold text-navy">Step {Math.min(stepsDone + 1, totalSteps)} of {totalSteps}</span>
+          <span>{progressPct}%</span>
+        </div>
+        <div className="h-2 w-full overflow-hidden rounded-full bg-navy/10">
+          <div
+            className="h-full rounded-full bg-navy transition-all duration-1000"
+            style={{ width: `${progressPct}%` }}
+          />
+        </div>
+        <div className="flex items-center justify-between text-xs text-ink-faint mt-1.5">
+          <span>Elapsed: <strong className="text-ink-muted">{fmtTime(elapsed)}</strong></span>
+          <span>
+            {remaining > 3
+              ? <>Est. remaining: <strong className="text-ink-muted">{fmtTime(remaining)}</strong></>
+              : <span className="text-teal-700 font-semibold">Almost ready…</span>}
+          </span>
+        </div>
+      </div>
+
+      {/* Step list */}
+      <div className="mt-6 w-full max-w-sm space-y-1.5 text-left">
         {PROCESSING_STEPS.map((s, i) => {
           const isDone = i < activeStep;
           const isCurrent = i === activeStep;
@@ -248,7 +279,7 @@ function ProcessingScreen({ sessionId, claimId }: { sessionId?: string; claimId:
         })}
       </div>
 
-      <p className="mt-8 text-xs text-ink-faint max-w-xs">
+      <p className="mt-6 text-xs text-ink-faint max-w-xs">
         We&apos;ll also email you the report link — you can close this tab if needed.
       </p>
     </div>
@@ -740,8 +771,13 @@ export function ResultClient({
 
   const fetchClaim = useCallback(async () => {
     const res = await fetch(`/api/claim/${claimId}`);
-    const j = await res.json();
-    if (!res.ok) throw new Error(j.error ?? "Failed to load.");
+    let j: ClaimResponse;
+    try {
+      j = await res.json();
+    } catch {
+      throw new Error(`Server error (${res.status}). Please try refreshing the page.`);
+    }
+    if (!res.ok) throw new Error((j as { error?: string }).error ?? "Failed to load.");
     return j as ClaimResponse;
   }, [claimId]);
 
