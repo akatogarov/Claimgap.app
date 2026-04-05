@@ -234,6 +234,12 @@ export default async function HomePage() {
                 >
                   How it works
                 </a>
+                <Link
+                  href="/access"
+                  className="inline-flex items-center rounded-lg border border-navy/15 bg-white/60 px-6 py-3.5 text-base font-semibold text-navy/70 transition hover:border-navy/30 hover:text-navy"
+                >
+                  Already have a report?
+                </Link>
               </div>
 
               <div className="mt-7 flex items-start gap-3 text-sm text-ink-muted">
