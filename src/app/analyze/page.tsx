@@ -1,7 +1,18 @@
 import { AnalyzeForm } from "@/components/AnalyzeForm";
 
 export const metadata = {
-  title: "Check your claim — ClaimGap",
+  title: "Check Your Insurance Claim for Underpayment — Free",
+  description:
+    "Upload your insurance policy and settlement letter. Our AI analyzes the gap in 90 seconds — free preview shows you what you may be owed before you pay anything.",
+  alternates: {
+    canonical: "/analyze",
+  },
+  openGraph: {
+    url: "/analyze",
+    title: "Check Your Insurance Claim for Underpayment — Free",
+    description:
+      "Upload your policy and settlement letter. Free AI-powered gap analysis — see results before you pay.",
+  },
 };
 
 export default function AnalyzePage() {
@@ -11,10 +22,10 @@ export default function AnalyzePage() {
         Free preview — see results before you pay
       </div>
       <h1 className="font-display text-3xl font-medium tracking-tight text-ink md:text-4xl">
-        Check if you&apos;re being underpaid
+        Check your insurance claim for underpayment
       </h1>
       <p className="mt-4 max-w-xl text-lg leading-relaxed text-ink-muted">
-        Three quick steps: pick your claim type, upload your documents, and enter your email. We read what you upload and show where the numbers may not match your paperwork.
+        Three quick steps: pick your claim type, upload your documents, and enter your email. We compare your policy against the insurer&apos;s offer and show you exactly where the numbers don&apos;t add up.
       </p>
       <div className="mt-5 flex flex-wrap gap-x-6 gap-y-2 text-sm text-ink-muted">
         <span className="flex items-center gap-2">

@@ -1,5 +1,21 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { getPublicStats } from "@/lib/stats";
+
+export const metadata: Metadata = {
+  title: "ClaimGap — Is Your Insurance Claim Underpaid?",
+  description:
+    "Find out if your insurance company underpaid your home, auto, or health claim. AI-powered gap analysis compares your policy against their offer — clause by clause. Free preview, $149 for the full dispute package.",
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    url: "/",
+    title: "ClaimGap — Is Your Insurance Claim Underpaid?",
+    description:
+      "Most insurers' first offers are too low. Upload your policy and settlement letter — ClaimGap's AI finds the gap in 90 seconds and writes your dispute letter.",
+  },
+};
 
 /* ── Icons ──────────────────────────────────────────────────────── */
 
@@ -65,9 +81,9 @@ const REPORT_SECTIONS = [
 ];
 
 const PAIN_POINTS = [
-  "Insurance companies don't show you what they actually owe",
-  "Most first offers are deliberately low — that's standard practice",
-  "You have a limited window to dispute. Waiting costs you money.",
+  "Insurers don't show you the coverage you're entitled to — they hope you won't look",
+  "First settlement offers are routinely 20–40% below what policies actually cover",
+  "Dispute deadlines are real. Every week you wait narrows your options.",
 ];
 
 /* ── Page ──────────────────────────────────────────────────────── */
@@ -75,7 +91,115 @@ const PAIN_POINTS = [
 export default async function HomePage() {
   const { claimsAnalyzed, averageGapDisplay } = await getPublicStats();
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://claimgap.app/#organization",
+        name: "ClaimGap",
+        url: "https://claimgap.app",
+        description:
+          "AI-powered insurance claim gap analysis. We compare your policy against the insurer's offer, identify underpayment, and generate a professional dispute letter.",
+        contactPoint: {
+          "@type": "ContactPoint",
+          email: "info@globaldeal.app",
+          contactType: "customer support",
+          areaServed: "US",
+          availableLanguage: "English",
+        },
+      },
+      {
+        "@type": "WebApplication",
+        "@id": "https://claimgap.app/#webapp",
+        name: "ClaimGap",
+        url: "https://claimgap.app",
+        applicationCategory: "FinanceApplication",
+        operatingSystem: "Any",
+        browserRequirements: "Requires JavaScript",
+        description:
+          "Upload your insurance policy and settlement letter to get an AI-powered gap analysis, dollar breakdown, recovery score, and ready-to-send dispute letter.",
+        offers: {
+          "@type": "Offer",
+          price: "149.00",
+          priceCurrency: "USD",
+          description: "Full insurance claim gap analysis report — one-time payment",
+          refundType: "FullRefund",
+          refundPolicies: "30-day satisfaction guarantee if no material gap is found",
+        },
+        featureList: [
+          "Insurance policy vs. settlement comparison",
+          "Clause-by-clause gap analysis",
+          "Dollar breakdown of underpayment",
+          "Recovery score (1–10)",
+          "Professional counter-offer letter",
+          "21-Day dispute escalation plan",
+          "State insurance commissioner complaint template",
+        ],
+        screenshot: "https://claimgap.app/og-image.png",
+      },
+      {
+        "@type": "FAQPage",
+        mainEntity: [
+          {
+            "@type": "Question",
+            name: "How do I know if my insurance claim was underpaid?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "Compare what your policy promises against what the insurer offered. Look for depreciation errors, excluded line items, and coverage clauses the adjuster ignored. ClaimGap does this automatically — upload your policy and settlement letter and we flag every discrepancy in under 90 seconds.",
+            },
+          },
+          {
+            "@type": "Question",
+            name: "What types of insurance claims can I check?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "ClaimGap covers home (property damage, wind, water, fire), auto (total loss, collision, comprehensive), and health (denials, underpayments, EOB disputes) insurance claims across all 50 U.S. states.",
+            },
+          },
+          {
+            "@type": "Question",
+            name: "How does the AI gap analysis work?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "Our AI reads your insurance policy and the insurer's settlement or denial letter, compares them clause by clause, identifies coverage language the insurer misapplied, calculates the dollar difference, and generates a professional dispute letter with your specific policy citations.",
+            },
+          },
+          {
+            "@type": "Question",
+            name: "How much does ClaimGap cost?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "The preview is completely free — you see the gap estimate before paying. The full report costs $149 one-time and includes the dispute letter, dollar breakdown, 21-day escalation plan, and state commissioner complaint template. 30-day refund if no material gap is found.",
+            },
+          },
+          {
+            "@type": "Question",
+            name: "Is ClaimGap legal advice?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "No. ClaimGap provides informational analysis only — it is not legal advice and does not constitute adjuster or insurance services. The analysis helps you understand your policy and build your own case. For legal action, consult a licensed attorney.",
+            },
+          },
+          {
+            "@type": "Question",
+            name: "How long does an insurance claim dispute take?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "Your ClaimGap analysis is ready in about 90 seconds. Most state insurance regulators require insurers to acknowledge disputes within 10–15 days and resolve them within 30–45 days. Our 21-Day Action Plan guides you through each follow-up step.",
+            },
+          },
+        ],
+      },
+    ],
+  };
+
   return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
     <div>
       {/* ── HERO ─────────────────────────────────────────────────── */}
       <section className="relative overflow-hidden border-b border-navy/10 bg-white">
@@ -87,12 +211,11 @@ export default async function HomePage() {
               </div>
 
               <h1 className="font-display text-balance text-4xl font-medium leading-[1.1] tracking-tight text-ink md:text-5xl lg:text-[3.25rem]">
-                You might be leaving{" "}
-                <span className="text-rust">thousands</span>{" "}
-                on the table
+                Your insurance claim{" "}
+                <span className="text-rust">may be underpaid</span>
               </h1>
               <p className="mt-6 max-w-lg text-lg leading-relaxed text-ink-muted">
-                Check your insurance claim before you accept their offer. Upload your policy and settlement letter — we will show you what they actually owe you.
+                Upload your policy and settlement letter — our AI compares them clause by clause and shows you exactly what the insurer actually owes you. Free preview in 90 seconds.
               </p>
 
               <div className="mt-9 flex flex-wrap gap-3">
@@ -254,10 +377,10 @@ export default async function HomePage() {
             <div>
               <p className="text-xs font-bold uppercase tracking-[0.2em] text-rust">The problem</p>
               <h2 className="mt-3 font-display text-3xl font-medium tracking-tight text-ink md:text-4xl">
-                Insurance companies are not on your side
+                Why most insurance settlements are too low
               </h2>
               <p className="mt-4 text-lg text-ink-muted">
-                Their adjusters are trained to minimize payouts. Your policy says one thing — their offer says another.
+                Insurance adjusters are paid to minimize claims. Your policy may entitle you to far more than they offered — but they count on you not checking.
               </p>
             </div>
             <div className="space-y-4">
@@ -290,10 +413,10 @@ export default async function HomePage() {
         <div className="mb-14 max-w-2xl">
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-ink-faint">Process</p>
           <h2 className="mt-3 font-display text-3xl font-medium tracking-tight text-ink md:text-4xl">
-            Three steps to know your leverage
+            How to dispute an underpaid insurance claim
           </h2>
           <p className="mt-4 text-lg text-ink-muted">
-            No lawyers. No retainers. Upload two PDFs, answer a few questions — we show you the gap.
+            No lawyers. No retainers. Upload your policy and settlement letter — we show you the exact gap and generate your dispute package.
           </p>
         </div>
 
@@ -432,6 +555,53 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* ── FAQ ──────────────────────────────────────────────────── */}
+      <section className="border-t border-navy/10 bg-paper" aria-labelledby="faq-heading">
+        <div className="mx-auto max-w-3xl px-4 py-20 md:px-6 md:py-24">
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-ink-faint">Common questions</p>
+          <h2 id="faq-heading" className="mt-3 font-display text-3xl font-medium tracking-tight text-ink md:text-4xl">
+            Insurance claim disputes — what you need to know
+          </h2>
+          <dl className="mt-12 divide-y divide-navy/10">
+            {[
+              {
+                q: "How do I know if my insurance claim was underpaid?",
+                a: "Compare what your policy promises against what the insurer actually offered. Look for depreciation calculations, excluded line items, and coverage clauses the adjuster may have ignored. ClaimGap does this automatically — upload your policy and settlement letter and we'll flag every discrepancy.",
+              },
+              {
+                q: "What types of insurance claims can I check?",
+                a: "ClaimGap covers home (property damage, wind, water, fire), auto (total loss, collision, comprehensive), and health (denials, underpayments, EOB disputes) insurance claims across all 50 U.S. states.",
+              },
+              {
+                q: "How does the AI gap analysis work?",
+                a: "Our AI reads your insurance policy and the insurer's settlement or denial letter, then compares them clause by clause. It identifies coverage language the insurer may have misapplied, calculates the dollar difference, and generates a professional dispute letter with your policy citations.",
+              },
+              {
+                q: "What documents do I need to check my claim?",
+                a: "At minimum: your insurance policy (or declarations page) and the settlement or denial letter from your insurer. Optional supporting documents — contractor estimates, repair quotes, medical bills, photos — help tighten the dollar estimate.",
+              },
+              {
+                q: "How much does ClaimGap cost?",
+                a: "The preview is completely free — you see the gap estimate and key findings before paying anything. The full report (including the dispute letter, dollar breakdown, 21-day escalation plan, and state commissioner complaint template) costs $149 one-time. If no material gap is found, we refund you within 30 days.",
+              },
+              {
+                q: "Is ClaimGap legal advice?",
+                a: "No. ClaimGap is an informational analysis tool — it is not legal advice and does not constitute adjuster or insurance services. The analysis helps you understand your policy and build your own case. For legal action, consult a licensed attorney.",
+              },
+              {
+                q: "How long does an insurance claim dispute take?",
+                a: "Your analysis is ready in about 90 seconds. Most state insurance regulators require insurers to acknowledge disputes within 10–15 days and resolve them within 30–45 days. Our 21-Day Action Plan guides you through each follow-up step.",
+              },
+            ].map(({ q, a }) => (
+              <div key={q} className="py-6">
+                <dt className="text-base font-semibold text-ink">{q}</dt>
+                <dd className="mt-3 text-sm leading-relaxed text-ink-muted">{a}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      </section>
+
       {/* ── FINAL CTA ────────────────────────────────────────────── */}
       <section className="mx-auto max-w-6xl px-4 py-20 md:px-6 md:py-24">
         <div className="rounded-lg border-2 border-navy/15 bg-white p-10 shadow-card md:p-14">
@@ -488,5 +658,6 @@ export default async function HomePage() {
         </div>
       </section>
     </div>
+    </>
   );
 }

@@ -4,6 +4,7 @@ export const runtime = 'edge';
 
 export const metadata = {
   title: "Preview — ClaimGap",
+  robots: { index: false, follow: false },
 };
 
 export default function PreviewPage({ params }: { params: { id: string } }) {

@@ -4,6 +4,7 @@ export const runtime = 'edge';
 
 export const metadata = {
   title: "Your analysis — ClaimGap",
+  robots: { index: false, follow: false },
 };
 
 export default function ResultPage({
